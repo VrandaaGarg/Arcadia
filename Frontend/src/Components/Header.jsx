@@ -10,7 +10,7 @@ function Header() {
           to="/" 
           className="text-2xl sm:text-3xl font-bold transform hover:scale-105 transition-all duration-300"
         >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF6B6B] via-[#4ECDC4] to-[#45B8AC] hover:from-[#4ECDC4] hover:to-[#FF6B6B]">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
             Arcadia
           </span>
         </NavLink>

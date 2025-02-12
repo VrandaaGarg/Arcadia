@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="bg-[#0B1120] border-t border-cyan-500/20 text-gray-300 py-12 px-4 sm:px-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="text-center md:text-left space-y-2 hover:transform hover:scale-105 transition-transform duration-300">
-          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] hover:from-[#4ECDC4] hover:to-[#FF6B6B] transition-all duration-500">
+          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-500">
             Arcadia
           </h2>
           <p className="text-cyan-400/80">Where Gaming Legends Rise 🏆</p>

@@ -42,7 +42,7 @@ function Home() {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto animate-fadeIn">
         <h1 className="text-5xl md:text-8xl font-black mb-4 text-center animate-slideDown">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FF6B6B] via-[#4ECDC4] to-[#45B8AC] hover:from-[#4ECDC4] hover:to-[#FF6B6B] transition-all duration-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-700">
             Arcadia
           </span>
         </h1>
