@@ -16,6 +16,7 @@ import Sudoku from "./Pages/Sudoku";
 import SignUp from "./Pages/SignUp";
 import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
+import Chess from "./Pages/Chess";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,8 +27,10 @@ const router = createBrowserRouter(
       <Route path="memorycardgame" element={<MemoryCardGame />} />
       <Route path="sudoku" element={<Sudoku />} />
       <Route path="signup" element={<SignUp />} />
+      <Route path="chess" element={<Chess />} />
       <Route path="login" element={<Login />} />
       <Route path="profile" element={<Profile />} />
+
     </Route>
   )
 );
