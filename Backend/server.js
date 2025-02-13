@@ -15,7 +15,7 @@ const app = express();
 // Dynamic CORS setup for development and production
 const allowedOrigins = [
   "http://localhost:5173", // Local frontend
-  "https://aarcadia.netlify.app" // Production frontend
+  "https://aarcadia.vercel.app/" // Production frontend
 ];
 
 app.use(cors({
