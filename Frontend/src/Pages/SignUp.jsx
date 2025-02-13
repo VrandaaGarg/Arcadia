@@ -1,52 +1,40 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     phone: "",
     password: "",
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value }); // ✅ Correct
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let users = JSON.parse(localStorage.getItem("users")) || [];
 
-    // Check if user already exists
-    const userExists = users.some((user) => user.email === formData.email);
-    if (userExists) {
-      alert("User already exists with this email!");
-      return;
+    try {
+      const response = await axios.post(
+        "http://localhost:5002/api/users/register",
+        formData
+      );
+      alert("Signup successful! Please login.");
+      navigate("/login");
+    } catch (error) {
+      alert(error.response?.data?.message || "Signup failed");
     }
-
-    // Create new user object
-    const newUser = {
-      id: Date.now(),
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      password: formData.password, // You can hash it for security
-      gameScores: [],
-    };
-
-    users.push(newUser);
-    localStorage.setItem("users", JSON.stringify(users));
-
-    alert("Signup successful! Please login.");
-    navigate("/login");
   };
 
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       {/* Background accent */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
-      
+
       <div className="relative z-10 w-full max-w-md mx-auto animate-fadeIn">
         <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-500">
@@ -54,13 +42,17 @@ const SignUp = () => {
           </span>
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20"
+        >
           {/* Name Input */}
           <div>
-            <label className="block text-cyan-400 mb-2 text-sm">Full Name</label>
+            <label className="block text-cyan-400 mb-2 text-sm">Username</label>
             <input
               type="text"
-              name="name"
+              name="username"
+              value={formData.username}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
@@ -76,6 +68,7 @@ const SignUp = () => {
             <input
               type="email"
               name="email"
+              value={formData.email}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
@@ -87,10 +80,13 @@ const SignUp = () => {
 
           {/* Phone Input */}
           <div>
-            <label className="block text-cyan-400 mb-2 text-sm">Phone Number</label>
+            <label className="block text-cyan-400 mb-2 text-sm">
+              Phone Number
+            </label>
             <input
               type="tel"
               name="phone"
+              value={formData.phone}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
@@ -106,6 +102,7 @@ const SignUp = () => {
             <input
               type="password"
               name="password"
+              value={formData.password}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 

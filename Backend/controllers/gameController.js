@@ -7,29 +7,44 @@ const isValidObjectId = (id) => mongoose.isValidObjectId(id);
 
 // Add a new game
 //working
+
 const addGame = async (req, res) => {
   try {
-    const { name, type } = req.body;
+    const { name, type, link, ImgUrl } = req.body;
 
-    if (!name || !type) {
+    // Check if all required fields are provided
+    if (!name || !type || !link || !ImgUrl) {
       return res
         .status(400)
-        .json({ message: "Game name and type are required" });
+        .json({ message: "Game name, type,Img Url and link are required" });
     }
 
+    // Check if the game already exists
     const existingGame = await Game.findOne({ name });
     if (existingGame) {
       return res.status(400).json({ message: "Game already exists" });
     }
 
+    // Format the 'type' field
     const formattedType =
       type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 
-    const newGame = new Game({ name, type: formattedType, topScores: [] });
+    // Create a new game instance
+    const newGame = new Game({
+      name,
+      type: formattedType,
+      link,
+      ImgUrl,
+      topScores: [],
+    });
+
+    // Save the new game to the database
     await newGame.save();
 
+    // Respond with the newly created game
     res.status(201).json(newGame);
   } catch (error) {
+    // Handle server errors
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

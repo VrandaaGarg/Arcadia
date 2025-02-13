@@ -23,6 +23,8 @@ const mongoose = require("mongoose");
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   type: { type: String, required: true, enum: ["Singleplayer", "Multiplayer"] },
+  link: { type: String, required: true },
+  ImgUrl: { type: String, required: true },
   topScores: [
     {
       userId: {

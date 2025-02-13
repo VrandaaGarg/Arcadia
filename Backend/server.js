@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const connectDB = require("./config/dbConnection");
 const userRoutes = require("./routes/userRoutes");
 const gameRoutes = require("./routes/gameRoutes");
@@ -8,7 +9,20 @@ const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 dotenv.config(); // Load environment variables
 
 const app = express(); // Initialize express app
-app.use(express.json()); // Middleware to parse JSON
+
+app.use(
+  express.json(),
+  cors({
+    origin: "http://localhost:5173", // Allow requests from React frontend
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
+
+// OR (If you want to allow all origins temporarily during development)
+app.use(cors());
+
+app.use(express.json()); // Ensure JSON request handling
 
 // Connect to MongoDB
 connectDB();

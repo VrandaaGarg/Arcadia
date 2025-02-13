@@ -1,34 +1,51 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loginData, setLoginData] = useState({
     emailOrUsername: "",
     password: "",
   });
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+    setIsLoading(true);
+    
+    try {
+      const response = await axios.post(
+        "http://localhost:5002/api/users/login",
+        {
+          emailOrUsername: loginData.emailOrUsername,
+          password: loginData.password
+        }
+      );
 
-    const user = users.find(
-      (user) =>
-        (user.email === loginData.emailOrUsername ||
-          user.name === loginData.emailOrUsername) &&
-        user.password === loginData.password
-    );
-
-    if (user) {
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      alert("Login successful!");
-      navigate("/profile");
-    } else {
-      alert("Invalid credentials!");
+      if (response.data && response.data.user) {
+        // Update global auth state
+        login(response.data.user);
+        setMessage({ text: 'Login successful!', type: 'success' });
+        // Redirect to the attempted page or home
+        const destination = location.state?.from?.pathname || '/';
+        navigate(destination);
+      }
+    } catch (error) {
+      setMessage({ 
+        text: error.response?.data?.message || 'Login failed', 
+        type: 'error' 
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,7 +53,7 @@ const Login = () => {
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       {/* Background accent */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
-      
+
       <div className="relative z-10 w-full max-w-md mx-auto animate-fadeIn">
         <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-500">
@@ -44,13 +61,30 @@ const Login = () => {
           </span>
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20">
+        {message.text && (
+          <div className={`mb-4 p-4 rounded-lg text-center ${
+            message.type === 'success' 
+              ? 'bg-green-500/20 text-green-400' 
+              : 'bg-red-500/20 text-red-400'
+          }`}>
+            {message.text}
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20"
+        >
           {/* Email/Username Input */}
           <div>
-            <label className="block text-cyan-400 mb-2 text-sm">Email or Username</label>
+            <label className="block text-cyan-400 mb-2 text-sm">
+              Email or Username
+            </label>
             <input
               type="text"
               name="emailOrUsername"
+              placeholder="Email or Username"
+              value={loginData.emailOrUsername}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
@@ -65,6 +99,8 @@ const Login = () => {
             <input
               type="password"
               name="password"
+              placeholder="Password"
+              value={loginData.password}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
