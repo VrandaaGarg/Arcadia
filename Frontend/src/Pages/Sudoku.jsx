@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const sudokuPuzzles = [
   [
@@ -69,53 +70,75 @@ function Sudoku() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold text-blue-600 mb-4">Sudoku</h1>
+    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
+      {/* Background accent */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
-      <div className="mb-4">
-        <label className="mr-2 font-semibold">Choose a puzzle:</label>
-        <select
-          onChange={(e) => handlePuzzleChange(Number(e.target.value))}
-          value={selectedPuzzle}
-          className="border rounded px-2 py-1"
-        >
-          {sudokuPuzzles.map((_, index) => (
-            <option key={index} value={index}>
-              Puzzle {index + 1}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
+          Sudoku
+        </h1>
 
-      <div className="grid grid-cols-9 gap-1 border border-gray-800">
-        {board.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <input
-              key={`${rowIndex}-${colIndex}`}
-              type="text"
-              className="w-10 h-10 text-center border border-gray-500 focus:outline-none"
-              value={cell}
-              onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              disabled={cell !== ""}
-            />
-          ))
-        )}
-      </div>
+        {/* Puzzle Selection & Leaderboard */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <select
+            onChange={(e) => handlePuzzleChange(Number(e.target.value))}
+            value={selectedPuzzle}
+            className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl text-gray-200 focus:outline-none focus:border-cyan-500/50"
+          >
+            {sudokuPuzzles.map((_, index) => (
+              <option key={index} value={index} className="bg-slate-800">
+                Puzzle {index + 1}
+              </option>
+            ))}
+          </select>
 
-      <div className="flex gap-6 justify-center">
-        <button
-          onClick={() => alert(checkWin() ? "You solved it!" : "Keep going!")}
-          className="mt-4 px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-600"
-        >
-          Check
-        </button>
+          <NavLink
+            to="/leaderboard"
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+          >
+            🏆 Leaderboard
+          </NavLink>
+        </div>
 
-        <button
-          onClick={() => setBoard([...sudokuPuzzles[selectedPuzzle]])}
-          className="mt-4 px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600"
-        >
-          Reset
-        </button>
+        {/* Sudoku Grid */}
+        <div className="grid grid-cols-9 gap-0.5 p-2 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-cyan-500/20">
+          {board.map((row, rowIndex) =>
+            row.map((cell, colIndex) => (
+              <input
+                key={`${rowIndex}-${colIndex}`}
+                type="text"
+                maxLength="1"
+                value={cell}
+                onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
+                disabled={sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== ""}
+                className={`w-8 h-8 sm:w-12 sm:h-12 text-center text-lg sm:text-xl font-medium
+                  ${(rowIndex + 1) % 3 === 0 && 'border-b-2 border-cyan-500/30'}
+                  ${(colIndex + 1) % 3 === 0 && 'border-r-2 border-cyan-500/30'}
+                  ${cell ? 'text-cyan-400' : 'text-gray-400'}
+                  ${sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== "" ? 'bg-slate-700/50' : 'bg-slate-800/30'}
+                  focus:outline-none focus:bg-slate-700/70 transition-colors duration-200
+                  hover:bg-slate-700/50`}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Control Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <button
+            onClick={() => alert(checkWin() ? "🎉 Congratulations! You solved it!" : "Keep trying! You're doing great!")}
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Check Solution
+          </button>
+          <button
+            onClick={() => setBoard([...sudokuPuzzles[selectedPuzzle]])}
+            className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Reset Board
+          </button>
+        </div>
       </div>
     </div>
   );

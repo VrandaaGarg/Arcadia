@@ -1,8 +1,9 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const choices = ["Rock", "Paper", "Scissors"];
 
-const RockPaperScissors = () => {
+function RockPaperScissors() {
   const [playerChoice, setPlayerChoice] = useState(null);
   const [computerChoice, setComputerChoice] = useState(null);
   const [playerScore, setPlayerScore] = useState(0);
@@ -45,58 +46,78 @@ const RockPaperScissors = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
-      <h1 className="text-4xl font-bold mb-6">Rock Paper Scissors</h1>
+    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
-      {/* Scoreboard */}
-      <div className="flex gap-8 text-xl font-semibold mb-6">
-        <p className="bg-gray-700 px-4 py-2 rounded-lg">You: {playerScore}</p>
-        <p className="bg-gray-700 px-4 py-2 rounded-lg">
-          Computer: {computerScore}
-        </p>
-      </div>
+      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
+          Rock Paper Scissors
+        </h1>
 
-      {/* Choices */}
-      <div className="flex gap-4 mb-6">
-        {choices.map((choice) => (
-          <button
-            key={choice}
-            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold text-lg rounded-lg"
-            onClick={() => playGame(choice)}
+        {/* Score & Leaderboard */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex gap-4">
+            <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+              You: {playerScore}
+            </p>
+            <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+              CPU: {computerScore}
+            </p>
+          </div>
+          <NavLink
+            to="/leaderboard"
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >
-            {choice}
-          </button>
-        ))}
-      </div>
-
-      {/* Results */}
-      {result && <div className="mt-6 text-2xl font-bold">{result}</div>}
-
-      {/* Display Choices */}
-      {playerChoice && computerChoice && (
-        <div className="mt-4 text-xl">
-          You chose: <span className="font-bold">{playerChoice}</span> <br />
-          Computer chose: <span className="font-bold">{computerChoice}</span>
+            🏆 Leaderboard
+          </NavLink>
         </div>
-      )}
 
-      {/* Reset Buttons */}
-      <div className="flex gap-4 mt-6">
-        <button
-          className="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold text-lg rounded-lg"
-          onClick={resetGame}
-        >
-          Play Again
-        </button>
-        <button
-          className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold text-lg rounded-lg"
-          onClick={resetScores}
-        >
-          Reset Scores
-        </button>
+        {/* Game Choices */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          {choices.map((choice) => (
+            <button
+              key={choice}
+              onClick={() => playGame(choice)}
+              className="px-8 py-4 bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 rounded-xl
+                transition-all duration-300 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]
+                transform hover:scale-105"
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
+
+        {/* Results Display */}
+        {result && (
+          <div className="text-center mb-8 animate-fadeIn">
+            <p className="text-2xl font-bold text-cyan-400 mb-4">{result}</p>
+            {playerChoice && (
+              <div className="space-y-2 text-gray-300">
+                <p>You chose: <span className="text-cyan-400">{playerChoice}</span></p>
+                <p>Computer chose: <span className="text-cyan-400">{computerChoice}</span></p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Control Buttons */}
+        <div className="flex flex-wrap justify-center gap-4">
+          <button
+            onClick={resetGame}
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Play Again
+          </button>
+          <button
+            onClick={resetScores}
+            className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Reset Scores
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default RockPaperScissors;

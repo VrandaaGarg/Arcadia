@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 const cardsArray = [
   { id: 1, emoji: "🍎" },
@@ -11,7 +12,7 @@ const cardsArray = [
   { id: 8, emoji: "🍓" },
 ];
 
-const MemoryCardGame = () => {
+function MemoryCardGame() {
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matched, setMatched] = useState([]);
@@ -59,39 +60,72 @@ const MemoryCardGame = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
-      <h1 className="text-4xl font-bold mb-4">Memory Card Game</h1>
-      <p className="text-lg mb-2">Moves: {moves}</p>
-      {matched.length === cards.length && (
-        <p className="text-2xl font-bold text-green-400 mb-4">🎉 You Won! 🎉</p>
-      )}
+    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
+      {/* Background accent */}
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
-      <div className="grid grid-cols-4 gap-4">
-        {cards.map((card, index) => (
-          <button
-            key={index}
-            className={`w-20 h-20 text-3xl flex items-center justify-center rounded-lg transition ${
-              flippedCards.includes(index) || matched.includes(index)
-                ? "bg-blue-500"
-                : "bg-gray-700 hover:bg-gray-600"
-            }`}
-            onClick={() => handleCardClick(index)}
+      <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
+          Memory Card Game
+        </h1>
+
+        {/* Score & Leaderboard */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+            Moves: {moves}
+          </p>
+          <NavLink
+            to="/leaderboard"
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >
-            {flippedCards.includes(index) || matched.includes(index)
-              ? card.emoji
-              : "❓"}
-          </button>
-        ))}
-      </div>
+            🏆 Leaderboard
+          </NavLink>
+        </div>
 
-      <button
-        className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg rounded-lg"
-        onClick={startGame}
-      >
-        Restart Game
-      </button>
+        {/* Win Message */}
+        {matched.length === cards.length && (
+          <div className="text-2xl font-bold text-cyan-400 mb-8 animate-bounce">
+            🎉 Congratulations! You Won! 🎉
+          </div>
+        )}
+
+        {/* Game Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          {cards.map((card, index) => (
+            <button
+              key={index}
+              onClick={() => handleCardClick(index)}
+              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-xl text-3xl sm:text-4xl
+                flex items-center justify-center transform transition-all duration-300
+                ${flippedCards.includes(index) || matched.includes(index)
+                  ? 'bg-gradient-to-br from-cyan-500 to-blue-500 rotate-0'
+                  : 'bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-500/50 rotate-180'
+                }
+                ${matched.includes(index) && 'animate-pulse'}
+                hover:scale-105 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]`}
+            >
+              <span className={`transform transition-all duration-300
+                ${flippedCards.includes(index) || matched.includes(index)
+                  ? 'rotate-0'
+                  : 'rotate-180 opacity-0'
+                }`}
+              >
+                {card.emoji}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Control Button */}
+        <button
+          onClick={startGame}
+          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+        >
+          New Game
+        </button>
+      </div>
     </div>
   );
-};
+}
 
 export default MemoryCardGame;
