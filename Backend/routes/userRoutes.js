@@ -3,13 +3,23 @@ const router = express.Router();
 const {
   registerUser,
   getAllUsers,
+  forgotPassword,
+  resetPassword,
   getUserById,
   updateUser,
   deleteUser,
+  loginUser,
 } = require("../controllers/userController");
 
 // Register a new user
 router.post("/register", registerUser);
+
+//login a user
+router.post("/login", loginUser);
+
+// Forgot and reset password
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 // Get all users
 router.get("/", getAllUsers);
