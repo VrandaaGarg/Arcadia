@@ -8,8 +8,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "./App";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 // Page imports
 import Home from "./Pages/Home";
