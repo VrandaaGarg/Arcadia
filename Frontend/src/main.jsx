@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext.jsx";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 // Page imports
 import Home from "./Pages/Home";
