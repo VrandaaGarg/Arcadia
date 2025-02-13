@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// Determine the base URL based on environment
 const API = axios.create({
-  baseURL: "http://localhost:5002", // Change this if your backend runs on a different port
+  baseURL: process.env.NODE_ENV === "production"
+    ? "https://arcadia-backend-765n.onrender.com"
+    : "http://localhost:5002",
   headers: {
     "Content-Type": "application/json",
   },

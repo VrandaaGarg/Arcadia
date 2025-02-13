@@ -6,23 +6,32 @@ const userRoutes = require("./routes/userRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 const { errorHandler, notFound } = require("./middleware/errorMiddleware");
 
-dotenv.config(); // Load environment variables
+// Load environment variables
+dotenv.config();
 
-const app = express(); // Initialize express app
+// Initialize express app
+const app = express();
 
-app.use(
-  express.json(),
-  cors({
-    origin: "http://localhost:5173", // Allow requests from React frontend
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
+// Dynamic CORS setup for development and production
+const allowedOrigins = [
+  "http://localhost:5173", // Local frontend
+  "https://aarcadia.netlify.app" // Production frontend
+];
 
-// OR (If you want to allow all origins temporarily during development)
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true,
+}));
 
-app.use(express.json()); // Ensure JSON request handling
+// Middleware for JSON request handling
+app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
@@ -37,5 +46,6 @@ app.use(notFound);
 // Middleware for handling errors
 app.use(errorHandler);
 
+// Start server
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));
