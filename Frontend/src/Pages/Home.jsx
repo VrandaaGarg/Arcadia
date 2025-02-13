@@ -18,6 +18,11 @@ const games = [
     path: "/sudoku",
     image: "/sudoku.png",
   },
+  {
+    name: "Chess",
+    path: "/chess",
+    image: "/chess.jpeg", // Add a chess image to your assets
+  },
 ];
 
 function Home() {
