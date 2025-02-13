@@ -17,6 +17,7 @@ import SignUp from "./Pages/SignUp";
 import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import Chess from "./Pages/Chess";
+import SnakeGame from "./Pages/SnakeGame";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,7 @@ const router = createBrowserRouter(
       <Route path="sudoku" element={<Sudoku />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="chess" element={<Chess />} />
+      <Route path="snake" element={<SnakeGame />} />
       <Route path="login" element={<Login />} />
       <Route path="profile" element={<Profile />} />
 
