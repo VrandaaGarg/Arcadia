@@ -10,15 +10,16 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "Username already taken" });
+    // Check if email is already registered
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email already registered" });
     }
 
     const newUser = new User({ username, email, phone, password });
     await newUser.save();
 
-    res.status(201).json(newUser);
+    res.status(201).json({ message: "User registered successfully", newUser });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -53,16 +54,16 @@ const getUserById = async (req, res) => {
 //working
 const updateUser = async (req, res) => {
   try {
-    const { name, email, phone } = req.body; // Allowed fields to update
+    const { username, email, phone } = req.body; // Allowed fields to update
 
     // Check if at least one valid field is provided
-    if (!name && !email && !phone) {
+    if (!username && !email && !phone) {
       return res.status(400).json({ message: "No valid fields to update" });
     }
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { name, email, phone },
+      { username, email, phone },
       { new: true, runValidators: true }
     );
 
