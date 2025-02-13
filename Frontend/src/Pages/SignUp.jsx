@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -20,7 +22,7 @@ const SignUp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5002/api/users/register",
+        `${API_URL}/api/users/register`,
         formData
       );
       alert("Signup successful! Please login.");
