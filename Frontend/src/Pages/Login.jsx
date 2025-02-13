@@ -1,43 +1,51 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loginData, setLoginData] = useState({
     emailOrUsername: "",
     password: "",
   });
-
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
     try {
       const response = await axios.post(
         "http://localhost:5002/api/users/login",
         {
-          emailOrUsername,
-          password,
+          emailOrUsername: loginData.emailOrUsername,
+          password: loginData.password
         }
       );
 
-      if (response.status === 200) {
-        const userData = response.data.user; // Get user details
-
-        // ✅ Store user details in localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        // ✅ Update state (if using React state)
-        setUser(userData);
+      if (response.data && response.data.user) {
+        // Update global auth state
+        login(response.data.user);
+        setMessage({ text: 'Login successful!', type: 'success' });
+        // Redirect to the attempted page or home
+        const destination = location.state?.from?.pathname || '/';
+        navigate(destination);
       }
     } catch (error) {
-      console.error(
-        "Login error:",
-        error.response?.data?.message || error.message
-      );
+      setMessage({ 
+        text: error.response?.data?.message || 'Login failed', 
+        type: 'error' 
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,8 +61,18 @@ const Login = () => {
           </span>
         </h1>
 
+        {message.text && (
+          <div className={`mb-4 p-4 rounded-lg text-center ${
+            message.type === 'success' 
+              ? 'bg-green-500/20 text-green-400' 
+              : 'bg-red-500/20 text-red-400'
+          }`}>
+            {message.text}
+          </div>
+        )}
+
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSubmit}
           className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20"
         >
           {/* Email/Username Input */}

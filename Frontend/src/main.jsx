@@ -8,8 +8,12 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "./App";
-import TicTacToe from "./Pages/TicTacToe";
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Page imports
 import Home from "./Pages/Home";
+import TicTacToe from "./Pages/TicTacToe";
 import RockPaperScissors from "./Pages/RockPaperScissors";
 import MemoryCardGame from "./Pages/MemoryCardGame";
 import Sudoku from "./Pages/Sudoku";
@@ -21,18 +25,28 @@ import SnakeGame from "./Pages/SnakeGame";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route element={
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    }>
+      {/* Public Routes */}
       <Route path="" element={<Home />} />
+      <Route path="signup" element={<SignUp />} />
+      <Route path="login" element={<Login />} />
       <Route path="tictactoe" element={<TicTacToe />} />
       <Route path="rockpaperscissors" element={<RockPaperScissors />} />
       <Route path="memorycardgame" element={<MemoryCardGame />} />
       <Route path="sudoku" element={<Sudoku />} />
-      <Route path="signup" element={<SignUp />} />
       <Route path="chess" element={<Chess />} />
       <Route path="snake" element={<SnakeGame />} />
-      <Route path="login" element={<Login />} />
-      <Route path="profile" element={<Profile />} />
 
+      {/* Protected Routes */}
+      <Route path="profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      } />
     </Route>
   )
 );
