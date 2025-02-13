@@ -8,27 +8,36 @@ const Login = () => {
     password: "",
   });
 
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5002/api/users/login",
+        {
+          emailOrUsername,
+          password,
+        }
+      );
 
-    const user = users.find(
-      (user) =>
-        (user.email === loginData.emailOrUsername ||
-          user.name === loginData.emailOrUsername) &&
-        user.password === loginData.password
-    );
+      if (response.status === 200) {
+        const userData = response.data.user; // Get user details
 
-    if (user) {
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      alert("Login successful!");
-      navigate("/profile");
-    } else {
-      alert("Invalid credentials!");
+        // ✅ Store user details in localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        // ✅ Update state (if using React state)
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error(
+        "Login error:",
+        error.response?.data?.message || error.message
+      );
     }
   };
 
@@ -36,7 +45,7 @@ const Login = () => {
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       {/* Background accent */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
-      
+
       <div className="relative z-10 w-full max-w-md mx-auto animate-fadeIn">
         <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-500">
@@ -44,13 +53,20 @@ const Login = () => {
           </span>
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20"
+        >
           {/* Email/Username Input */}
           <div>
-            <label className="block text-cyan-400 mb-2 text-sm">Email or Username</label>
+            <label className="block text-cyan-400 mb-2 text-sm">
+              Email or Username
+            </label>
             <input
               type="text"
               name="emailOrUsername"
+              placeholder="Email or Username"
+              value={loginData.emailOrUsername}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
@@ -65,6 +81,8 @@ const Login = () => {
             <input
               type="password"
               name="password"
+              placeholder="Password"
+              value={loginData.password}
               required
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
