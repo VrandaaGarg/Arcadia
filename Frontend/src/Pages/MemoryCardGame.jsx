@@ -65,7 +65,7 @@ function MemoryCardGame() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
+        <h1 className="text-4xl text-center md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
           Memory Card Game
         </h1>
 
@@ -90,12 +90,12 @@ function MemoryCardGame() {
         )}
 
         {/* Game Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-4  gap-2 md:gap-4 mb-8">
           {cards.map((card, index) => (
             <button
               key={index}
               onClick={() => handleCardClick(index)}
-              className={`w-20 h-20 sm:w-24 sm:h-24 rounded-xl text-3xl sm:text-4xl
+              className={`w-16 h-16 md:w-20 md:h-20 sm:w-24 sm:h-24 rounded-xl text-3xl sm:text-4xl
                 flex items-center justify-center transform transition-all duration-300
                 ${flippedCards.includes(index) || matched.includes(index)
                   ? 'bg-gradient-to-br from-cyan-500 to-blue-500 rotate-0'
