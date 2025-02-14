@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import API from "../api";
 
 const SIZE = 4;
 
@@ -65,6 +66,50 @@ const moveBoard = (board, direction, setScore) => {
 };
 
 const Game2048 = () => {
+  ////////   Please remove this code and write your own code   ////////
+  const [user, setUser] = useState(null);
+  const [gameId, setGameId] = useState(null);
+  const [scoreToSubmit, setScoreToSubmit] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      console.error("User not found in localStorage");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGameId();
+  }, []);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log("Game ID is now set:");
+    }
+  }, [gameId]);
+
+  const fetchGameId = async () => {
+    try {
+      const response = await API.get("/api/games");
+
+      const currentPath = window.location.pathname;
+
+      const game = response.data.find((g) => g.link === currentPath);
+
+      if (game) {
+        setGameId(game._id);
+      } else {
+        console.error("Game not found for this URL:");
+      }
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  };
+
+  /////////////////////////////////////////////////////////////////////
   const [board, setBoard] = useState(initializeBoard);
   const [score, setScore] = useState(0);
 
@@ -123,7 +168,42 @@ const Game2048 = () => {
 
   const resetGame = () => {
     setBoard(initializeBoard());
+    setScoreToSubmit(score); // Store the score for submission
     setScore(0);
+  };
+
+  // Trigger `submitScore()` when `scoreToSubmit` is set
+  useEffect(() => {
+    if (scoreToSubmit !== null) {
+      submitScore(scoreToSubmit);
+      setScoreToSubmit(null);
+    }
+  }, [scoreToSubmit]);
+
+  //submitting the score
+
+  const submitScore = async (score) => {
+    if (!user || !user._id) {
+      console.error("User not logged in!");
+      return;
+    }
+    if (!gameId) {
+      console.error("Game ID not found!");
+      return;
+    }
+
+    try {
+      const response = await API.post(`/api/games/${gameId}/scores`, {
+        userId: user._id,
+        score,
+      });
+      console.log("Score submitted:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting score:",
+        error.response?.data || error.message
+      );
+    }
   };
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
@@ -153,7 +233,7 @@ const Game2048 = () => {
           onClick={resetGame}
           className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl text-xl md:text-3xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
         >
-          Reset Game
+          Save and Reset Game
         </button>
       </div>
     </div>
