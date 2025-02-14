@@ -96,11 +96,11 @@ const Game2048 = () => {
         2048 Game
       </h1>
       <div className="border-1 border-white/30 rounded-lg overflow-hidden shadow-lg shadow-white/10">
-        <div className="grid grid-cols-4 gap-4 bg-[#082B4C] p-4 rounded-lg">
+        <div className="grid grid-cols-4 gap-2 md:gap-4 bg-[#082B4C] p-4 rounded-lg">
           {board.flat().map((num, index) => (
             <div
               key={index}
-              className={`w-28 h-28 flex items-center justify-center border-2 hover:scale-105 hover:shadow-sm hover:shadow-white/70 hover:border-white/40 text-black bg-[radial-gradient(ellipse_at_top,#53D2FF,#0188B9)] border-black text-5xl font-bold bg-gray-${
+              className={`w-16 h-16 md:w-28 md:h-28 flex items-center justify-center border-2 hover:scale-105 hover:shadow-sm hover:shadow-white/70 hover:border-white/40 text-black bg-[radial-gradient(ellipse_at_top,#53D2FF,#0188B9)] border-black text-3xl md:text-5xl font-bold bg-gray-${
                 num ? "300" : "500"
               } rounded-lg`}
             >
@@ -111,12 +111,12 @@ const Game2048 = () => {
       </div>
 
       <div className="flex flex-row items-center mt-8 gap-10">
-        <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl text-3xl ">
+        <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl text-xl md:text-3xl ">
           Score: {score}
         </p>
         <button
           onClick={resetGame}
-          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl text-3xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl text-xl md:text-3xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
         >
           Reset Game
         </button>

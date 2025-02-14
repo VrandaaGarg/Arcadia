@@ -319,7 +319,7 @@ function Chess() {
                   <button
                     key={`${rowIndex}-${colIndex}`}
                     onClick={() => handleSquareClick(rowIndex, colIndex)}
-                    className={`w-14 h-14 md:w-20 md:h-20 flex items-center justify-center
+                    className={`w-8 h-8 text-center md:w-20 md:h-20 flex items-center justify-center
                       relative overflow-hidden
                       ${((rowIndex + colIndex) % 2 === 0)
                         ? 'bg-[#EDEDD3] hover:bg-[#F7F7E6]'
@@ -328,7 +328,7 @@ function Chess() {
                       transition-all duration-300`}
                   >
                     {piece && (
-                      <span className={`text-4xl md:text-5xl select-none
+                      <span className={`text-2xl text-center md:text-5xl select-none
                         text-black transition-transform duration-200
                         ${isSelected ? 'scale-110' : ''}`}
                       >
