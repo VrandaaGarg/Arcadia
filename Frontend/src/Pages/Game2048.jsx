@@ -71,10 +71,10 @@ const Game2048 = () => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       let direction = null;
-      if (event.key === "ArrowUp") direction = "up";
-      if (event.key === "ArrowDown") direction = "down";
-      if (event.key === "ArrowLeft") direction = "left";
-      if (event.key === "ArrowRight") direction = "right";
+      if (event.key === "ArrowUp" || event.key === "w") direction = "up";
+      if (event.key === "ArrowDown" || event.key === "s") direction = "down";
+      if (event.key === "ArrowLeft" || event.key === "a") direction = "left";
+      if (event.key === "ArrowRight" || event.key === "d") direction = "right";
 
       if (direction) {
         event.preventDefault();
@@ -84,6 +84,41 @@ const Game2048 = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    let touchStartX, touchStartY;
+
+    const handleTouchStart = (event) => {
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (event) => {
+      let touchEndX = event.changedTouches[0].clientX;
+      let touchEndY = event.changedTouches[0].clientY;
+
+      let dx = touchEndX - touchStartX;
+      let dy = touchEndY - touchStartY;
+
+      let direction = null;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = dx > 0 ? "right" : "left";
+      } else {
+        direction = dy > 0 ? "down" : "up";
+      }
+
+      if (direction) {
+        setBoard((prevBoard) => moveBoard(prevBoard, direction, setScore));
+      }
+    };
+
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
   }, []);
 
   const resetGame = () => {
