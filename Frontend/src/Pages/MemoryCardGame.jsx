@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import API from "../api";
+import LeaderboardButton from "../Components/LeaderboardButton";
 
 const cardsArray = [
   { id: 1, emoji: "🍎" },
@@ -137,12 +138,8 @@ function MemoryCardGame() {
           <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
             Moves: {moves}
           </p>
-          <NavLink
-            to="/leaderboard"
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-          >
-            🏆 Leaderboard
-          </NavLink>
+          <LeaderboardButton gameLink="memorycardgame" />{" "}
+          {/* Pass link without "/" */}
         </div>
 
         {/* Win Message */}

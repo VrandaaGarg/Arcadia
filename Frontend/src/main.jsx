@@ -24,6 +24,7 @@ import Chess from "./Pages/Chess";
 import SnakeGame from "./Pages/SnakeGame";
 import Game2048 from "./Pages/Game2048";
 import Minesweeper from "./Pages/Minesweeper.jsx";
+import Leaderboard from "./Components/Leaderboard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,6 +47,7 @@ const router = createBrowserRouter(
       <Route path="snake" element={<SnakeGame />} />
       <Route path="2048" element={<Game2048 />} />
       <Route path="minesweeper" element={<Minesweeper />} />
+      <Route path="/:gameName/leaderboard" element={<Leaderboard />} />
 
       {/* Protected Routes */}
       <Route

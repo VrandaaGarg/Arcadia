@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../api";
+import LeaderboardButton from "../Components/LeaderboardButton";
 
 const SIZE = 4;
 
@@ -235,6 +236,7 @@ const Game2048 = () => {
         >
           Save and Reset Game
         </button>
+        <LeaderboardButton gameLink="2048" /> {/* Pass link without "/" */}
       </div>
     </div>
   );
