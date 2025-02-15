@@ -52,20 +52,22 @@ const Leaderboard = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row justify-center md:gap-12 gap-6 mb-8 md:mb-16 w-full max-w-xl md:max-w-4xl px-4">
+        className="flex flex-col md:flex-row items-end justify-center gap-4 w-full max-w-xl md:max-w-4xl px-2 md:px-4 mb-8"
+      >
         {/* Second Place */}
         {leaderboard[1] && (
           <motion.div 
             whileHover={{ scale: 1.02 }} 
-            className="text-center relative md:mt-8 flex md:flex-col items-center bg-gray-800/50 rounded-xl p-4 md:p-6">
-            <div className="relative mr-4 md:mr-0">
-              <FaUserCircle className="text-5xl md:text-7xl text-silver-400" />
-              <FaMedal className="absolute -top-2 -right-2 md:-top-4 md:-right-4 text-2xl md:text-3xl text-gray-300" />
+            className="order-2 md:order-1 w-full md:w-1/4 flex flex-col items-center"
+          >
+            <div className="relative">
+              <FaUserCircle className="text-4xl md:text-6xl text-silver-400" />
+              <FaMedal className="absolute -top-1 -right-1 text-xl md:text-2xl text-gray-300" />
             </div>
-            <div className="text-left md:text-center md:mt-4">
-              <p className="text-lg md:text-xl font-bold text-gray-300">2nd Place</p>
-              <p className="text-base md:text-lg font-medium">{leaderboard[1]?.username}</p>
-              <p className="text-lg md:text-xl font-bold text-purple-400">{leaderboard[1]?.score}</p>
+            <div className="mt-2 text-center bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-700/50 p-2 md:p-3 w-full">
+              <p className="text-sm md:text-base font-bold text-gray-300">2nd Place</p>
+              <p className="text-sm font-medium truncate">{leaderboard[1]?.username}</p>
+              <p className="text-base font-bold text-purple-400">{leaderboard[1]?.score}</p>
             </div>
           </motion.div>
         )}
@@ -74,15 +76,16 @@ const Leaderboard = () => {
         {leaderboard[0] && (
           <motion.div 
             whileHover={{ scale: 1.02 }} 
-            className="text-center relative order-first md:order-none flex md:flex-col items-center bg-purple-900/50 rounded-xl p-4 md:p-6 border border-purple-500/30">
-            <div className="relative mr-4 md:mr-0">
+            className="order-1 md:order-2 w-full md:w-1/3 flex flex-col items-center mt-5 md:mt-10"
+          >
+            <div className="relative">
               <FaUserCircle className="text-6xl md:text-8xl text-yellow-400" />
-              <FaCrown className="absolute -top-4 md:-top-8 left-1/2 transform -translate-x-1/2 text-4xl md:text-5xl text-yellow-500 animate-bounce" />
+              <FaCrown className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-4xl md:text-5xl text-yellow-500 animate-bounce" />
             </div>
-            <div className="text-left md:text-center md:mt-4">
-              <p className="text-xl md:text-2xl font-bold text-yellow-400">1st Place</p>
-              <p className="text-lg md:text-xl font-medium">{leaderboard[0]?.username}</p>
-              <p className="text-xl md:text-2xl font-bold text-yellow-400">{leaderboard[0]?.score}</p>
+            <div className="mt-2 text-center bg-purple-900/50 rounded-lg backdrop-blur-sm border border-purple-500/30 p-3 md:p-4 w-full">
+              <p className="text-lg md:text-xl font-bold text-yellow-400">1st Place</p>
+              <p className="text-base md:text-lg font-medium truncate">{leaderboard[0]?.username}</p>
+              <p className="text-lg md:text-xl font-bold text-yellow-400">{leaderboard[0]?.score}</p>
             </div>
           </motion.div>
         )}
@@ -91,15 +94,16 @@ const Leaderboard = () => {
         {leaderboard[2] && (
           <motion.div 
             whileHover={{ scale: 1.02 }} 
-            className="text-center relative md:mt-8 flex md:flex-col items-center bg-gray-800/50 rounded-xl p-4 md:p-6">
-            <div className="relative mr-4 md:mr-0">
-              <FaUserCircle className="text-5xl md:text-7xl text-bronze-400" />
-              <FaMedal className="absolute -top-2 -right-2 md:-top-4 md:-right-4 text-2xl md:text-3xl text-yellow-700" />
+            className="order-3 w-full md:w-1/4 flex flex-col items-center"
+          >
+            <div className="relative">
+              <FaUserCircle className="text-4xl md:text-6xl text-bronze-400" />
+              <FaMedal className="absolute -top-1 -right-1 text-xl md:text-2xl text-yellow-700" />
             </div>
-            <div className="text-left md:text-center md:mt-4">
-              <p className="text-lg md:text-xl font-bold text-yellow-700">3rd Place</p>
-              <p className="text-base md:text-lg font-medium">{leaderboard[2]?.username}</p>
-              <p className="text-lg md:text-xl font-bold text-purple-400">{leaderboard[2]?.score}</p>
+            <div className="mt-2 text-center bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-700/50 p-2 md:p-3 w-full">
+              <p className="text-sm md:text-base font-bold text-yellow-700">3rd Place</p>
+              <p className="text-sm font-medium truncate">{leaderboard[2]?.username}</p>
+              <p className="text-base font-bold text-purple-400">{leaderboard[2]?.score}</p>
             </div>
           </motion.div>
         )}
@@ -136,11 +140,15 @@ const Leaderboard = () => {
   }
 
   return (
-    <div className="min-h-screen px-3 md:px-4 py-8 md:py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
+    <div className="min-h-screen px-2 md:px-4 py-6 md:py-16 flex flex-col items-center justify-center
+      bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
+    >
       <motion.h2 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-10 text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12 bg-gradient-to-r from-purple-400 to-pink-400 text-transparent bg-clip-text">
+        className="text-2xl md:text-4xl font-bold text-center mb-6 md:mb-12 
+          bg-gradient-to-r from-purple-400 to-pink-400 text-transparent bg-clip-text"
+      >
         LEADERBOARD
       </motion.h2>
 
@@ -150,15 +158,16 @@ const Leaderboard = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-4xl px-2 md:px-4">
-          <div className="bg-purple-900/30 rounded-xl overflow-hidden shadow-lg backdrop-blur-sm">
+          className="w-full max-w-4xl px-2 md:px-4"
+        >
+          <div className="bg-purple-900/30 rounded-lg md:rounded-xl overflow-hidden shadow-lg backdrop-blur-sm">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse min-w-[300px]">
                 <thead>
                   <tr className="bg-purple-800/50">
-                    <th className="p-3 md:p-4 text-left text-sm md:text-base">Rank</th>
-                    <th className="p-3 md:p-4 text-left text-sm md:text-base">Player</th>
-                    <th className="p-3 md:p-4 text-right text-sm md:text-base">Score</th>
+                    <th className="p-2 md:p-4 text-left text-xs md:text-base">#</th>
+                    <th className="p-2 md:p-4 text-left text-xs md:text-base">Player</th>
+                    <th className="p-2 md:p-4 text-right text-xs md:text-base">Score</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -168,15 +177,20 @@ const Leaderboard = () => {
                       animate={{ opacity: 1 }}
                       transition={{ delay: index * 0.05 }}
                       key={player.userId}
-                      className="border-t border-purple-700/30 hover:bg-purple-700/20 transition-colors">
-                      <td className="p-3 md:p-4 text-gray-300 text-sm md:text-base">{index + 4}</td>
-                      <td className="p-3 md:p-4">
-                        <div className="flex items-center gap-2 md:gap-3">
-                          <FaUserCircle className="text-lg md:text-xl text-purple-400" />
-                          <span className="font-medium text-sm md:text-base">{player.username}</span>
+                      className="border-t border-purple-700/30 hover:bg-purple-700/20 transition-colors"
+                    >
+                      <td className="p-2 md:p-4 text-gray-300 text-xs md:text-base">{index + 4}</td>
+                      <td className="p-2 md:p-4">
+                        <div className="flex items-center gap-2">
+                          <FaUserCircle className="text-base md:text-xl text-purple-400" />
+                          <span className="font-medium text-xs md:text-base truncate max-w-[120px] md:max-w-none">
+                            {player.username}
+                          </span>
                         </div>
                       </td>
-                      <td className="p-3 md:p-4 text-right font-bold text-purple-400 text-sm md:text-base">{player.score}</td>
+                      <td className="p-2 md:p-4 text-right font-bold text-purple-400 text-xs md:text-base">
+                        {player.score}
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>

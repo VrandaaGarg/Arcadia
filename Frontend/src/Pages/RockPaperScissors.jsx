@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaHandRock, FaHandPaper, FaHandScissors, FaRedo } from "react-icons/fa";
 
-const choices = ["Rock", "Paper", "Scissors"];
+const choices = [
+  { name: "Rock", icon: FaHandRock },
+  { name: "Paper", icon: FaHandPaper },
+  { name: "Scissors", icon: FaHandScissors },
+];
 
 function RockPaperScissors() {
   const [playerChoice, setPlayerChoice] = useState(null);
@@ -12,7 +17,7 @@ function RockPaperScissors() {
 
   const playGame = (choice) => {
     setPlayerChoice(choice);
-    let computerMove = choices[Math.floor(Math.random() * 3)];
+    let computerMove = choices[Math.floor(Math.random() * 3)].name;
     setComputerChoice(computerMove);
     determineWinner(choice, computerMove);
   };
@@ -46,74 +51,102 @@ function RockPaperScissors() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
+    <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white relative">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-5xl font-black mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
+        >
           Rock Paper Scissors
-        </h1>
+        </motion.h1>
 
-        {/* Score & Leaderboard */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex gap-4">
-            <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
-              You: {playerScore}
-            </p>
-            <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
-              CPU: {computerScore}
-            </p>
+        {/* Score Display */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex gap-6 mb-12"
+        >
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-cyan-500/20 px-8 py-4 rounded-xl text-center">
+            <p className="text-gray-400 mb-1">You</p>
+            <p className="text-3xl font-bold text-cyan-400">{playerScore}</p>
           </div>
-          <NavLink
-            to="/leaderboard"
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/20 px-8 py-4 rounded-xl text-center">
+            <p className="text-gray-400 mb-1">Computer</p>
+            <p className="text-3xl font-bold text-purple-400">{computerScore}</p>
+          </div>
+        </motion.div>
+
+        {/* Game Results */}
+        {result && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 text-center"
           >
-            🏆 Leaderboard
-          </NavLink>
-        </div>
+            <p className="text-3xl font-bold mb-4 
+              ${result.includes('Win') ? 'text-cyan-400' : 
+                result.includes('Draw') ? 'text-yellow-400' : 'text-red-400'}"
+            >
+              {result}
+            </p>
+            <div className="flex gap-8 items-center justify-center">
+              <div className="text-center">
+                <p className="text-gray-400 mb-2">You chose</p>
+                <p className="text-xl text-cyan-400">{playerChoice}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-gray-400 mb-2">CPU chose</p>
+                <p className="text-xl text-purple-400">{computerChoice}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Game Choices */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          {choices.map((choice) => (
-            <button
-              key={choice}
-              onClick={() => playGame(choice)}
-              className="px-8 py-4 bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 rounded-xl
-                transition-all duration-300 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]
-                transform hover:scale-105"
-            >
-              {choice}
-            </button>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 w-full max-w-2xl">
+          {choices.map((choice) => {
+            const Icon = choice.icon;
+            return (
+              <motion.button
+                key={choice.name}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => playGame(choice.name)}
+                className="px-8 py-6 bg-gray-800/50 backdrop-blur-sm border border-cyan-500/20 rounded-xl
+                  transition-all duration-300 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20
+                  flex flex-col items-center gap-3"
+              >
+                <Icon className="text-3xl md:text-4xl text-cyan-400" />
+                <span className="font-medium">{choice.name}</span>
+              </motion.button>
+            )
+          })}
         </div>
-
-        {/* Results Display */}
-        {result && (
-          <div className="text-center mb-8 animate-fadeIn">
-            <p className="text-2xl font-bold text-cyan-400 mb-4">{result}</p>
-            {playerChoice && (
-              <div className="space-y-2 text-gray-300">
-                <p>You chose: <span className="text-cyan-400">{playerChoice}</span></p>
-                <p>Computer chose: <span className="text-cyan-400">{computerChoice}</span></p>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Control Buttons */}
         <div className="flex flex-wrap justify-center gap-4">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={resetGame}
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+              rounded-xl transition-all duration-300 flex items-center gap-2"
           >
+            <FaRedo />
             Play Again
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={resetScores}
-            className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+            className="px-6 py-3 bg-gray-800/50 backdrop-blur-sm border border-red-500/20 
+              hover:border-red-500/40 rounded-xl transition-all duration-300 text-red-400 hover:text-red-300"
           >
             Reset Scores
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
