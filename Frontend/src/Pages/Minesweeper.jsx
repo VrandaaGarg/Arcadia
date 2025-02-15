@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaBomb, FaFlag, FaRedo } from "react-icons/fa";
+import LeaderboardButton from "../Components/LeaderboardButton";
+import API from "../api";
 
 const DIFFICULTY = {
   easy: { rows: 8, cols: 8, mines: 10 },
@@ -41,6 +43,47 @@ const Minesweeper = () => {
   const [board, setBoard] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [user, setUser] = useState(null);
+  const [gameId, setGameId] = useState(null);
+  const [scoreToSubmit, setScoreToSubmit] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      console.error("User not found in localStorage");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGameId();
+  }, []);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log("Game ID is now set:");
+    }
+  }, [gameId]);
+
+  const fetchGameId = async () => {
+    try {
+      const response = await API.get("/api/games");
+
+      const currentPath = window.location.pathname;
+
+      const game = response.data.find((g) => g.link === currentPath);
+
+      if (game) {
+        setGameId(game._id);
+      } else {
+        console.error("Game not found for this URL:");
+      }
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  };
 
   useEffect(() => {
     restartGame();
@@ -60,6 +103,7 @@ const Minesweeper = () => {
 
     if (newBoard[r][c].value === "M") {
       setGameOver(true);
+      setScoreToSubmit(score);
       revealBoard();
     } else {
       setScore((prev) => prev + 10);
@@ -78,8 +122,40 @@ const Minesweeper = () => {
   const restartGame = () => {
     let { rows, cols, mines } = DIFFICULTY[difficulty];
     setBoard(createBoard(rows, cols, mines));
+    setScoreToSubmit(score);
     setGameOver(false);
     setScore(0);
+  };
+
+  useEffect(() => {
+    if (scoreToSubmit !== null) {
+      submitScore(scoreToSubmit);
+      setScoreToSubmit(null);
+    }
+  }, [scoreToSubmit]);
+
+  const submitScore = async (score) => {
+    if (!user || !user._id) {
+      console.error("User not logged in!");
+      return;
+    }
+    if (!gameId) {
+      console.error("Game ID not found!");
+      return;
+    }
+
+    try {
+      const response = await API.post(`/api/games/${gameId}/scores`, {
+        userId: user._id,
+        score,
+      });
+      console.log("Score submitted:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting score:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (
@@ -165,6 +241,7 @@ const Minesweeper = () => {
             <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl text-xl md:text-3xl ">
               Score: {score}
             </p>
+            <LeaderboardButton gameLink="minesweeper" />
           </div>
         </div>
       )}
