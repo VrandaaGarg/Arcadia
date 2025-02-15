@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../api";
-import LeaderboardButton from "../Components/LeaderboardButton";
+import LeaderboardButton from "../Components/LeaderboardButton.jsx";
 
 const SIZE = 4;
 
@@ -67,7 +67,6 @@ const moveBoard = (board, direction, setScore) => {
 };
 
 const Game2048 = () => {
-  ////////   Please remove this code and write your own code   ////////
   const [user, setUser] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [scoreToSubmit, setScoreToSubmit] = useState(null);
@@ -110,7 +109,6 @@ const Game2048 = () => {
     }
   };
 
-  /////////////////////////////////////////////////////////////////////
   const [board, setBoard] = useState(initializeBoard);
   const [score, setScore] = useState(0);
 
@@ -206,37 +204,84 @@ const Game2048 = () => {
       );
     }
   };
-  return (
-    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
-      <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
-        2048 Game
-      </h1>
-      <div className="border-1 border-white/30 rounded-lg overflow-hidden shadow-lg shadow-white/10">
-        <div className="grid grid-cols-4 gap-2 md:gap-4 bg-[#082B4C] p-4 rounded-lg">
-          {board.flat().map((num, index) => (
-            <div
-              key={index}
-              className={`w-16 h-16 md:w-28 md:h-28 flex items-center justify-center border-2 hover:scale-105 hover:shadow-sm hover:shadow-white/70 hover:border-white/40 text-black bg-[radial-gradient(ellipse_at_top,#53D2FF,#0188B9)] border-black text-3xl md:text-5xl font-bold bg-gray-${
-                num ? "300" : "500"
-              } rounded-lg`}
-            >
-              {num !== 0 ? num : ""}
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="flex flex-row items-center mt-8 gap-10">
-        <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl text-xl md:text-3xl ">
-          Score: {score}
-        </p>
+  const getTileColor = (num) => {
+    const colors = {
+      2: 'bg-gradient-to-br from-blue-200 to-blue-300',
+      4: 'bg-gradient-to-br from-green-200 to-green-300',
+      8: 'bg-gradient-to-br from-yellow-200 to-yellow-300',
+      16: 'bg-gradient-to-br from-orange-200 to-orange-300',
+      32: 'bg-gradient-to-br from-red-200 to-red-300',
+      64: 'bg-gradient-to-br from-pink-200 to-pink-300',
+      128: 'bg-gradient-to-br from-purple-200 to-purple-300',
+      256: 'bg-gradient-to-br from-indigo-200 to-indigo-300',
+      512: 'bg-gradient-to-br from-cyan-200 to-cyan-300',
+      1024: 'bg-gradient-to-br from-emerald-200 to-emerald-300',
+      2048: 'bg-gradient-to-br from-yellow-200 to-red-300',
+    };
+    return colors[num] || 'bg-gray-700/50';
+  };
+
+  return (
+    <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
+      <div className="w-full max-w-2xl flex flex-col items-center">
+        <h1 className="text-4xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+          2048 Game
+        </h1>
+
+        {/* Controls Section */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+            <p className="text-2xl font-bold">Score: {score}</p>
+          </div>
+          <button
+            onClick={resetGame}
+            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+              px-6 py-3 rounded-xl text-xl font-bold transition-all duration-300 
+              transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20"
+          >
+            New Game
+          </button>
+          <LeaderboardButton gameLink="2048" />
+        </div>
+
+        {/* Game Board */}
+        <div className="bg-[#082B4C]/80 backdrop-blur-sm p-4 rounded-2xl shadow-xl border border-blue-500/20">
+          <div className="grid grid-cols-4 gap-3 aspect-square w-[320px] sm:w-[400px] md:w-[440px]">
+            {board.flat().map((num, index) => (
+              <div
+                key={index}
+                className={`w-full aspect-square rounded-lg flex items-center justify-center 
+                  ${getTileColor(num)} shadow-inner transition-colors duration-200`}
+              >
+                <span className={`font-bold ${num >= 100 ? 'text-2xl' : 'text-3xl'} text-gray-800`}>
+                  {num !== 0 ? num : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Game Instructions */}
+        <div className="mt-8 text-center text-gray-400">
+          <p className="mb-3 text-lg">Use arrow keys or swipe to move tiles</p>
+          <div className="flex justify-center gap-3">
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↑</kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↓</kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">←</kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">→</kbd>
+          </div>
+        </div>
+
+        {/* Submit Score Button */}
         <button
-          onClick={resetGame}
-          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl text-xl md:text-3xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+          onClick={() => submitScore(score)}
+          className="mt-8 px-6 py-3 bg-purple-600/30 hover:bg-purple-600/50 
+            border border-purple-500/30 rounded-xl transition-all duration-300
+            text-lg font-semibold hover:shadow-lg hover:shadow-purple-500/20"
         >
-          Save and Reset Game
+          Submit Score
         </button>
-        <LeaderboardButton gameLink="2048" /> {/* Pass link without "/" */}
       </div>
     </div>
   );
