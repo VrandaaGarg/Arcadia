@@ -41,6 +41,11 @@ function MemoryCardGame() {
     }
   }, [gameId]);
 
+  // Initialize game when component mounts
+  useEffect(() => {
+    startGame();
+  }, []);
+
   const fetchGameId = async () => {
     try {
       const response = await API.get("/api/games");
@@ -142,8 +147,8 @@ function MemoryCardGame() {
           {/* Pass link without "/" */}
         </div>
 
-        {/* Win Message */}
-        {matched.length === cards.length && (
+        {/* Win Message - Only show when there are cards and all are matched */}
+        {cards.length > 0 && matched.length === cards.length && (
           <div className="text-2xl font-bold text-cyan-400 mb-8 animate-bounce">
             🎉 Congratulations! You Won! 🎉
           </div>
