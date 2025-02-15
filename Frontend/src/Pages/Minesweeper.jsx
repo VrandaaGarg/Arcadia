@@ -122,7 +122,6 @@ const Minesweeper = () => {
   const restartGame = () => {
     let { rows, cols, mines } = DIFFICULTY[difficulty];
     setBoard(createBoard(rows, cols, mines));
-    setScoreToSubmit(score);
     setGameOver(false);
     setScore(0);
   };
