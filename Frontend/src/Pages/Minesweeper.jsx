@@ -162,22 +162,22 @@ const Minesweeper = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
+      className="min-h-screen px-2 sm:px-4 py-8 sm:py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
     >
-      <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
         Minesweeper
       </h1>
 
       {/* Difficulty Selection */}
-      <div className="flex flex-wrap justify-center gap-3 mb-8">
+      <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4 sm:mb-8">
         {Object.keys(DIFFICULTY).map((level) => (
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             key={level}
-            className={`px-6 py-2 rounded-lg font-semibold transition-all duration-200
+            className={`px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200
               ${difficulty === level
-                ? "bg-gradient-to-r from-cyan-500 to-blue-500 shadow-lg shadow-cyan-500/20"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 shadow-md"
                 : "bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700"
               }`}
             onClick={() => setDifficulty(level)}
@@ -188,20 +188,21 @@ const Minesweeper = () => {
       </div>
 
       {/* Game Stats */}
-      <div className="flex gap-4 mb-6">
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 px-4 py-2 rounded-lg">
-          <p className="text-xl font-semibold">Score: {score}</p>
+      <div className="flex gap-4 mb-4 sm:mb-6">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">
+          <p className="text-lg sm:text-xl font-semibold">Score: {score}</p>
         </div>
       </div>
 
       {/* Game Board */}
       <motion.div 
-        initial={{ scale: 0.95 }}
+        initial={{ scale: 0.98 }}
         animate={{ scale: 1 }}
-        className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl border border-gray-700 shadow-xl"
+        transition={{ duration: 0.2 }}
+        className="bg-gray-800/50 backdrop-blur-sm p-2 sm:p-4 rounded-xl border border-gray-700 shadow-xl"
       >
         <div
-          className="grid gap-1"
+          className="grid gap-0.5 sm:gap-1"
           style={{
             gridTemplateColumns: `repeat(${DIFFICULTY[difficulty].cols}, minmax(0, 1fr))`,
           }}
@@ -210,12 +211,13 @@ const Minesweeper = () => {
             row.map((cell, cIdx) => (
               <motion.div
                 key={`${rIdx}-${cIdx}`}
-                whileHover={{ scale: 0.95 }}
-                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center cursor-pointer text-xl
-                  rounded-md transition-all duration-200
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.1 }}
+                className={`w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center cursor-pointer 
+                  text-base sm:text-xl rounded transition-all duration-150
                   ${cell.revealed || gameOver
                     ? "bg-gray-700/50 shadow-inner"
-                    : "bg-gradient-to-br from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 shadow-md"
+                    : "bg-gradient-to-br from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 shadow"
                   } 
                   ${cell.clicked ? "bg-gray-600/50" : ""}`}
                 onClick={() => handleClick(rIdx, cIdx)}
@@ -247,12 +249,12 @@ const Minesweeper = () => {
       </motion.div>
 
       {/* Controls */}
-      <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
+      <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mt-4 sm:mt-8">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
-            px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:shadow-cyan-500/20
+            px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-base sm:text-lg font-semibold shadow-lg
             flex items-center gap-2"
           onClick={restartGame}
         >
@@ -267,20 +269,24 @@ const Minesweeper = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
         >
           <motion.div
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            className="bg-gray-800/90 p-8 rounded-xl flex flex-col items-center gap-6 border border-gray-700 max-w-md mx-4"
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            className="bg-gray-800/90 p-6 sm:p-8 rounded-xl flex flex-col items-center gap-4 sm:gap-6 
+              border border-gray-700 w-full max-w-sm sm:max-w-md"
           >
-            <h2 className="text-4xl font-bold text-red-500">Game Over!</h2>
-            <p className="text-2xl">Final Score: {score}</p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-red-500">Game Over!</h2>
+            <p className="text-xl sm:text-2xl">Final Score: {score}</p>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 rounded-lg font-semibold"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 sm:px-6 py-2 sm:py-3 
+                  rounded-lg text-base sm:text-lg font-semibold"
                 onClick={restartGame}
               >
                 Play Again

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import API from "../api";
 import LeaderboardButton from "../Components/LeaderboardButton.jsx";
 
@@ -130,40 +131,9 @@ const Game2048 = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    let touchStartX, touchStartY;
-
-    const handleTouchStart = (event) => {
-      touchStartX = event.touches[0].clientX;
-      touchStartY = event.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (event) => {
-      let touchEndX = event.changedTouches[0].clientX;
-      let touchEndY = event.changedTouches[0].clientY;
-
-      let dx = touchEndX - touchStartX;
-      let dy = touchEndY - touchStartY;
-
-      let direction = null;
-      if (Math.abs(dx) > Math.abs(dy)) {
-        direction = dx > 0 ? "right" : "left";
-      } else {
-        direction = dy > 0 ? "down" : "up";
-      }
-
-      if (direction) {
-        setBoard((prevBoard) => moveBoard(prevBoard, direction, setScore));
-      }
-    };
-
-    document.addEventListener("touchstart", handleTouchStart);
-    document.addEventListener("touchend", handleTouchEnd);
-    return () => {
-      document.removeEventListener("touchstart", handleTouchStart);
-      document.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, []);
+  const handleDirectionClick = (direction) => {
+    setBoard((prevBoard) => moveBoard(prevBoard, direction, setScore));
+  };
 
   const resetGame = () => {
     setBoard(initializeBoard());
@@ -225,20 +195,20 @@ const Game2048 = () => {
   return (
     <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
       <div className="w-full max-w-2xl flex flex-col items-center">
-        <h1 className="text-4xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+        <h1 className="text-3xl sm:text-4xl font-black mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
           2048 Game
         </h1>
 
         {/* Controls Section */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
-            <p className="text-2xl font-bold">Score: {score}</p>
+        <div className="flex flex-wrap justify-center gap-4 mb-6">
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl">
+            <p className="text-xl sm:text-2xl font-bold">Score: {score}</p>
           </div>
           <button
             onClick={resetGame}
             className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
-              px-6 py-3 rounded-xl text-xl font-bold transition-all duration-300 
-              transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20"
+              px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-xl font-bold transition-all duration-300 
+              hover:shadow-lg hover:shadow-cyan-500/20"
           >
             New Game
           </button>
@@ -246,8 +216,8 @@ const Game2048 = () => {
         </div>
 
         {/* Game Board */}
-        <div className="bg-[#082B4C]/80 backdrop-blur-sm p-4 rounded-2xl shadow-xl border border-blue-500/20">
-          <div className="grid grid-cols-4 gap-3 aspect-square w-[320px] sm:w-[400px] md:w-[440px]">
+        <div className="bg-[#082B4C]/80 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-xl border border-blue-500/20">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 aspect-square w-[280px] sm:w-[400px] md:w-[440px]">
             {board.flat().map((num, index) => (
               <div
                 key={index}
@@ -262,9 +232,47 @@ const Game2048 = () => {
           </div>
         </div>
 
-        {/* Game Instructions */}
-        <div className="mt-8 text-center text-gray-400">
-          <p className="mb-3 text-lg">Use arrow keys or swipe to move tiles</p>
+        {/* Mobile Arrow Controls */}
+        <div className="md:hidden mt-8 flex flex-col items-center gap-2">
+          <button
+            onClick={() => handleDirectionClick("up")}
+            className="w-16 h-16 rounded-xl bg-gray-800/50 hover:bg-gray-700/50 
+              flex items-center justify-center border border-gray-600
+              active:transform active:scale-95 transition-all duration-150"
+          >
+            <FaArrowUp className="text-2xl text-cyan-400" />
+          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleDirectionClick("left")}
+              className="w-16 h-16 rounded-xl bg-gray-800/50 hover:bg-gray-700/50 
+                flex items-center justify-center border border-gray-600
+                active:transform active:scale-95 transition-all duration-150"
+            >
+              <FaArrowLeft className="text-2xl text-cyan-400" />
+            </button>
+            <button
+              onClick={() => handleDirectionClick("down")}
+              className="w-16 h-16 rounded-xl bg-gray-800/50 hover:bg-gray-700/50 
+                flex items-center justify-center border border-gray-600
+                active:transform active:scale-95 transition-all duration-150"
+            >
+              <FaArrowDown className="text-2xl text-cyan-400" />
+            </button>
+            <button
+              onClick={() => handleDirectionClick("right")}
+              className="w-16 h-16 rounded-xl bg-gray-800/50 hover:bg-gray-700/50 
+                flex items-center justify-center border border-gray-600
+                active:transform active:scale-95 transition-all duration-150"
+            >
+              <FaArrowRight className="text-2xl text-cyan-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop Instructions */}
+        <div className="mt-8 hidden md:block text-center text-gray-400">
+          <p className="mb-3 text-lg">Use arrow keys to move tiles</p>
           <div className="flex justify-center gap-3">
             <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↑</kbd>
             <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↓</kbd>
