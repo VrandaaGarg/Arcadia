@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API from "../api";
-import LeaderboardButton from "../Components/Leaderboardbutton";
+import LeaderboardButton from "../Components/LeaderboardButton";
 
 const SIZE = 4;
 
