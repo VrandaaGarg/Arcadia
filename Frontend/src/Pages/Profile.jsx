@@ -9,6 +9,9 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -20,7 +23,10 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const userResponse = await API.get(`/api/users/${user._id}`);
+        console.log("User data:", userResponse.data);
         setUserData(userResponse.data);
+        setEmail(userResponse.data.email);
+        setPhone(userResponse.data.phone);
 
         // Fetch all games to match game names
         const gamesResponse = await API.get("/api/games");
@@ -38,6 +44,24 @@ const Profile = () => {
   }, [isAuthenticated, navigate, user?._id]);
 
   if (!isAuthenticated) return null;
+
+  const handleUpdate = async () => {
+    try {
+      const updatedUser = { email, phone }; // ✅ Only updating email & phone
+      const response = await API.put(`/api/users/${user._id}`, updatedUser);
+
+      // Preserve existing user data while updating email & phone
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        email: response.data.email,
+        phone: response.data.phone,
+      }));
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -69,6 +93,14 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Profile Header */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-cyan-500/20 mb-8">
+          <div className="absolute right-5 flex items-center justify-between">
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="bg-cyan-500 px-4 py-2 rounded-lg font-semibold"
+            >
+              {isEditing ? "Cancel" : "Edit"}
+            </button>
+          </div>
           <div className="flex items-center gap-6">
             {/* Avatar */}
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-3xl font-bold text-white">
@@ -80,6 +112,7 @@ const Profile = () => {
               <h1 className="text-3xl font-bold text-white mb-2">
                 {userData.username}
               </h1>
+
               <div className="space-y-1 text-gray-300">
                 <p className="flex items-center gap-2">
                   <svg
@@ -95,8 +128,17 @@ const Profile = () => {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  {userData.email}
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={!isEditing}
+                    className={`w-full p-2 rounded-lg text-white  transition-all duration-200 ${
+                      isEditing ? "border border-white/40" : "border-none"
+                    }`}
+                  />
                 </p>
+
                 <p className="flex items-center gap-2">
                   <svg
                     className="w-4 h-4 text-cyan-400"
@@ -111,11 +153,29 @@ const Profile = () => {
                       d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                     />
                   </svg>
-                  {userData.phone}
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={!isEditing}
+                    className={`w-full p-2 rounded-lg text-white  transition-all duration-200 ${
+                      isEditing ? "border border-white/40" : "border-none"
+                    }`}
+                  />
                 </p>
               </div>
             </div>
           </div>
+          {isEditing && (
+            <div className="flex place-content-center">
+              <button
+                onClick={handleUpdate}
+                className="mt-4 w-fit mx-auto bg-gradient-to-r from-cyan-500 to-blue-500 p-2 rounded-lg font-semibold"
+              >
+                Save Changes
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Game Statistics and Account Details Grid */}
@@ -152,7 +212,7 @@ const Profile = () => {
               Account Details
             </h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-slate-700/50 rounded-lg">
+              {/* <div className="flex justify-between items-center p-3 bg-slate-700/50 rounded-lg">
                 <span className="text-gray-300">Member Since</span>
                 <span className="text-cyan-400 font-semibold">
                   {new Date(
@@ -160,7 +220,7 @@ const Profile = () => {
                     16
                   ).toLocaleDateString()}
                 </span>
-              </div>
+              </div> */}
               <div className="flex justify-between items-center p-3 bg-slate-700/50 rounded-lg">
                 <span className="text-gray-300">Games Played</span>
                 <span className="text-cyan-400 font-semibold">
@@ -176,3 +236,52 @@ const Profile = () => {
 };
 
 export default Profile;
+
+//////////////////////////////////////////////
+
+{
+  /* <div>
+              <label className="text-gray-400">Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={!isEditing}
+                className="w-full p-2 rounded-lg bg-gray-800 text-white"
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-400">Email</label>
+              <input
+                type="email"
+                value={email}
+                disabled // Email should not be editable
+                className="w-full p-2 rounded-lg bg-gray-800 text-white cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-400">Phone</label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={!isEditing}
+                className="w-full p-2 rounded-lg bg-gray-800 text-white"
+              />
+            </div>
+          </div>
+
+          {isEditing && (
+            <button
+              onClick={handleUpdate}
+              className="mt-4 w-full bg-green-500 p-2 rounded-lg font-semibold"
+            >
+              Save Changes
+            </button>
+          )}
+        </div>
+      </div>
+    </div> */
+}
