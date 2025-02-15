@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import API from "../api";
+import LeaderboardButton from "../Components/LeaderboardButton";
 
 const SIZE = 4;
 
@@ -65,16 +67,60 @@ const moveBoard = (board, direction, setScore) => {
 };
 
 const Game2048 = () => {
+  ////////   Please remove this code and write your own code   ////////
+  const [user, setUser] = useState(null);
+  const [gameId, setGameId] = useState(null);
+  const [scoreToSubmit, setScoreToSubmit] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      console.error("User not found in localStorage");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGameId();
+  }, []);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log("Game ID is now set:");
+    }
+  }, [gameId]);
+
+  const fetchGameId = async () => {
+    try {
+      const response = await API.get("/api/games");
+
+      const currentPath = window.location.pathname;
+
+      const game = response.data.find((g) => g.link === currentPath);
+
+      if (game) {
+        setGameId(game._id);
+      } else {
+        console.error("Game not found for this URL:");
+      }
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  };
+
+  /////////////////////////////////////////////////////////////////////
   const [board, setBoard] = useState(initializeBoard);
   const [score, setScore] = useState(0);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       let direction = null;
-      if (event.key === "ArrowUp") direction = "up";
-      if (event.key === "ArrowDown") direction = "down";
-      if (event.key === "ArrowLeft") direction = "left";
-      if (event.key === "ArrowRight") direction = "right";
+      if (event.key === "ArrowUp" || event.key === "w") direction = "up";
+      if (event.key === "ArrowDown" || event.key === "s") direction = "down";
+      if (event.key === "ArrowLeft" || event.key === "a") direction = "left";
+      if (event.key === "ArrowRight" || event.key === "d") direction = "right";
 
       if (direction) {
         event.preventDefault();
@@ -86,9 +132,79 @@ const Game2048 = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    let touchStartX, touchStartY;
+
+    const handleTouchStart = (event) => {
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (event) => {
+      let touchEndX = event.changedTouches[0].clientX;
+      let touchEndY = event.changedTouches[0].clientY;
+
+      let dx = touchEndX - touchStartX;
+      let dy = touchEndY - touchStartY;
+
+      let direction = null;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = dx > 0 ? "right" : "left";
+      } else {
+        direction = dy > 0 ? "down" : "up";
+      }
+
+      if (direction) {
+        setBoard((prevBoard) => moveBoard(prevBoard, direction, setScore));
+      }
+    };
+
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
+
   const resetGame = () => {
     setBoard(initializeBoard());
+    setScoreToSubmit(score); // Store the score for submission
     setScore(0);
+  };
+
+  // Trigger `submitScore()` when `scoreToSubmit` is set
+  useEffect(() => {
+    if (scoreToSubmit !== null) {
+      submitScore(scoreToSubmit);
+      setScoreToSubmit(null);
+    }
+  }, [scoreToSubmit]);
+
+  //submitting the score
+
+  const submitScore = async (score) => {
+    if (!user || !user._id) {
+      console.error("User not logged in!");
+      return;
+    }
+    if (!gameId) {
+      console.error("Game ID not found!");
+      return;
+    }
+
+    try {
+      const response = await API.post(`/api/games/${gameId}/scores`, {
+        userId: user._id,
+        score,
+      });
+      console.log("Score submitted:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting score:",
+        error.response?.data || error.message
+      );
+    }
   };
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
@@ -118,8 +234,9 @@ const Game2048 = () => {
           onClick={resetGame}
           className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl text-xl md:text-3xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
         >
-          Reset Game
+          Save and Reset Game
         </button>
+        <LeaderboardButton gameLink="2048" /> {/* Pass link without "/" */}
       </div>
     </div>
   );

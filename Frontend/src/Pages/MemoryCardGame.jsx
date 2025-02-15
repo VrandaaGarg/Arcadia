@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import API from "../api";
+import LeaderboardButton from "../Components/LeaderboardButton";
 
 const cardsArray = [
   { id: 1, emoji: "🍎" },
@@ -13,14 +15,49 @@ const cardsArray = [
 ];
 
 function MemoryCardGame() {
+  const [user, setUser] = useState(null);
   const [cards, setCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
+  const [gameId, setGameId] = useState(null);
 
   useEffect(() => {
-    startGame();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      console.error("User not found in localStorage");
+    }
   }, []);
+
+  useEffect(() => {
+    fetchGameId();
+  }, []);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log("Game ID is now set:");
+    }
+  }, [gameId]);
+
+  const fetchGameId = async () => {
+    try {
+      const response = await API.get("/api/games");
+
+      const currentPath = window.location.pathname;
+
+      const game = response.data.find((g) => g.link === currentPath);
+
+      if (game) {
+        setGameId(game._id);
+      } else {
+        console.error("Game not found for this URL:", currentPath);
+      }
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
+  };
 
   const startGame = () => {
     const shuffledCards = [...cardsArray, ...cardsArray]
@@ -54,11 +91,38 @@ function MemoryCardGame() {
     if (cards[firstIndex].emoji === cards[secondIndex].emoji) {
       setMatched((prev) => [...prev, firstIndex, secondIndex]);
       setFlippedCards([]);
+
+      if (matched.length + 2 === cards.length) {
+        submitScore(moves + 1);
+      }
     } else {
       setTimeout(() => setFlippedCards([]), 800);
     }
   };
 
+  const submitScore = async (score) => {
+    if (!user || !user._id) {
+      console.error("User not logged in!");
+      return;
+    }
+    if (!gameId) {
+      console.error("Game ID not found!");
+      return;
+    }
+
+    try {
+      const response = await API.post(`/api/games/${gameId}/scores`, {
+        userId: user._id,
+        score,
+      });
+      console.log("Score submitted:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting score:",
+        error.response?.data || error.message
+      );
+    }
+  };
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       {/* Background accent */}
@@ -74,12 +138,8 @@ function MemoryCardGame() {
           <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
             Moves: {moves}
           </p>
-          <NavLink
-            to="/leaderboard"
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-          >
-            🏆 Leaderboard
-          </NavLink>
+          <LeaderboardButton gameLink="memorycardgame" />{" "}
+          {/* Pass link without "/" */}
         </div>
 
         {/* Win Message */}
@@ -97,17 +157,20 @@ function MemoryCardGame() {
               onClick={() => handleCardClick(index)}
               className={`w-16 h-16 md:w-20 md:h-20 sm:w-24 sm:h-24 rounded-xl text-3xl sm:text-4xl
                 flex items-center justify-center transform transition-all duration-300
-                ${flippedCards.includes(index) || matched.includes(index)
-                  ? 'bg-gradient-to-br from-cyan-500 to-blue-500 rotate-0'
-                  : 'bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-500/50 rotate-180'
+                ${
+                  flippedCards.includes(index) || matched.includes(index)
+                    ? "bg-gradient-to-br from-cyan-500 to-blue-500 rotate-0"
+                    : "bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-500/50 rotate-180"
                 }
-                ${matched.includes(index) && 'animate-pulse'}
+                ${matched.includes(index) && "animate-pulse"}
                 hover:scale-105 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]`}
             >
-              <span className={`transform transition-all duration-300
-                ${flippedCards.includes(index) || matched.includes(index)
-                  ? 'rotate-0'
-                  : 'rotate-180 opacity-0'
+              <span
+                className={`transform transition-all duration-300
+                ${
+                  flippedCards.includes(index) || matched.includes(index)
+                    ? "rotate-0"
+                    : "rotate-180 opacity-0"
                 }`}
               >
                 {card.emoji}
