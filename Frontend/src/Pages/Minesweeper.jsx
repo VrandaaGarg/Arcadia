@@ -5,7 +5,7 @@ import LeaderboardButton from "../Components/LeaderboardButton";
 import API from "../api";
 
 const DIFFICULTY = {
-  easy: { rows: 8, cols: 8, mines: 10 },
+  easy: { rows: 8, cols: 8, mines: 12 },
   medium: { rows: 8, cols: 8, mines: 25 },
   hard: { rows: 8, cols: 8, mines: 40 },
 };
