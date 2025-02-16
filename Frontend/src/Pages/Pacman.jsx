@@ -3,20 +3,7 @@ import { FaDotCircle, FaGhost, FaCircle } from "react-icons/fa"; // Pac-Man, Gho
 import LeaderboardButton from "../Components/LeaderboardButton";
 import API from "../api";
 
-const Pacman = () => {
-  const gridSize = 10;
-  const initialPacMan = { x: 0, y: 0 };
-  const initialGhosts = [
-    { x: 5, y: 5 },
-    { x: 7, y: 7 },
-    { x: 2, y: 8 },
-    { x: 8, y: 3 },
-    { x: 4, y: 6 },
-  ];
-  const [pacMan, setPacMan] = useState(initialPacMan);
-  const [ghosts, setGhosts] = useState(initialGhosts);
-  const [score, setScore] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
+const PacManGame = () => {
   const [user, setUser] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [scoreToSubmit, setScoreToSubmit] = useState(null);
@@ -38,7 +25,6 @@ const Pacman = () => {
   useEffect(() => {
     if (gameId) {
       console.log("Game ID is now set:");
-      console.log(gameId);
     }
   }, [gameId]);
 
@@ -60,12 +46,50 @@ const Pacman = () => {
     }
   };
 
+  const gridSize = 10;
+  const initialPacMan = { x: 0, y: 0 };
+  const initialGhosts = [
+    { x: 5, y: 5 },
+    { x: 7, y: 7 },
+    { x: 2, y: 8 },
+    { x: 8, y: 3 },
+    { x: 4, y: 6 },
+  ];
+
+  const generateRandomWalls = () => {
+    let walls = [];
+    while (walls.length < 20) {
+      // Adjust number of walls as needed
+      let newWall = {
+        x: Math.floor(Math.random() * gridSize),
+        y: Math.floor(Math.random() * gridSize),
+      };
+      if (
+        !walls.some((wall) => wall.x === newWall.x && wall.y === newWall.y) &&
+        !initialGhosts.some(
+          (ghost) => ghost.x === newWall.x && ghost.y === newWall.y
+        ) &&
+        !(newWall.x === initialPacMan.x && newWall.y === initialPacMan.y)
+      ) {
+        walls.push(newWall);
+      }
+    }
+    return walls;
+  };
+
+  const [walls, setWalls] = useState(generateRandomWalls());
+  const [pacMan, setPacMan] = useState(initialPacMan);
+  const [ghosts, setGhosts] = useState(initialGhosts);
+  const [score, setScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
   const [food, setFood] = useState(
     Array.from({ length: gridSize * gridSize }, (_, index) => {
       const x = index % gridSize;
       const y = Math.floor(index / gridSize);
       return { x, y };
-    })
+    }).filter(
+      (cell) => !walls.some((wall) => wall.x === cell.x && wall.y === cell.y)
+    )
   );
 
   useEffect(() => {
@@ -73,12 +97,22 @@ const Pacman = () => {
       if (isGameOver) return;
       event.preventDefault(); // Prevents arrow keys from scrolling the screen
       let newPacMan = { ...pacMan };
-      if (event.key === "ArrowUp") newPacMan.y = Math.max(0, pacMan.y - 1);
+      let proposedMove = { ...pacMan };
+
+      if (event.key === "ArrowUp") proposedMove.y = Math.max(0, pacMan.y - 1);
       if (event.key === "ArrowDown")
-        newPacMan.y = Math.min(gridSize - 1, pacMan.y + 1);
-      if (event.key === "ArrowLeft") newPacMan.x = Math.max(0, pacMan.x - 1);
+        proposedMove.y = Math.min(gridSize - 1, pacMan.y + 1);
+      if (event.key === "ArrowLeft") proposedMove.x = Math.max(0, pacMan.x - 1);
       if (event.key === "ArrowRight")
-        newPacMan.x = Math.min(gridSize - 1, pacMan.x + 1);
+        proposedMove.x = Math.min(gridSize - 1, pacMan.x + 1);
+
+      if (
+        !walls.some(
+          (wall) => wall.x === proposedMove.x && wall.y === proposedMove.y
+        )
+      ) {
+        newPacMan = proposedMove;
+      }
       setPacMan(newPacMan);
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -92,10 +126,18 @@ const Pacman = () => {
   }, [pacMan, ghosts]);
 
   useEffect(() => {
-    setFood((prevFood) =>
-      prevFood.filter((dot) => !(dot.x === pacMan.x && dot.y === pacMan.y))
-    );
-    setScore((prevScore) => prevScore + 1);
+    setFood((prevFood) => {
+      const isEating = prevFood.some(
+        (dot) => dot.x === pacMan.x && dot.y === pacMan.y
+      );
+      if (isEating) {
+        setScore((prevScore) => prevScore + 1);
+        return prevFood.filter(
+          (dot) => !(dot.x === pacMan.x && dot.y === pacMan.y)
+        );
+      }
+      return prevFood;
+    });
   }, [pacMan]);
 
   useEffect(() => {
@@ -112,19 +154,33 @@ const Pacman = () => {
       ];
       setGhosts((prevGhosts) =>
         prevGhosts.map((ghost) => {
-          const randomDirection =
-            directions[Math.floor(Math.random() * directions.length)];
-          return {
-            x: Math.max(0, Math.min(gridSize - 1, ghost.x + randomDirection.x)),
-            y: Math.max(0, Math.min(gridSize - 1, ghost.y + randomDirection.y)),
-          };
+          let randomDirection, newGhost;
+          do {
+            randomDirection =
+              directions[Math.floor(Math.random() * directions.length)];
+            newGhost = {
+              x: Math.max(
+                0,
+                Math.min(gridSize - 1, ghost.x + randomDirection.x)
+              ),
+              y: Math.max(
+                0,
+                Math.min(gridSize - 1, ghost.y + randomDirection.y)
+              ),
+            };
+          } while (
+            walls.some((wall) => wall.x === newGhost.x && wall.y === newGhost.y)
+          );
+          return newGhost;
         })
       );
-    }, 250);
+    }, 300);
     return () => clearInterval(moveGhosts);
   }, [isGameOver]);
 
   const restartGame = () => {
+    const newWalls = generateRandomWalls();
+    setWalls(newWalls);
     setPacMan(initialPacMan);
     setGhosts(initialGhosts);
     setScore(0);
@@ -134,7 +190,10 @@ const Pacman = () => {
         const x = index % gridSize;
         const y = Math.floor(index / gridSize);
         return { x, y };
-      })
+      }).filter(
+        (cell) =>
+          !newWalls.some((wall) => wall.x === cell.x && wall.y === cell.y)
+      )
     );
   };
 
@@ -171,6 +230,7 @@ const Pacman = () => {
       );
     }
   };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
       <h1 className="text-3xl font-bold mb-4">Pac-Man Clone</h1>
@@ -187,6 +247,8 @@ const Pacman = () => {
                 <FaDotCircle className="text-yellow-400 text-2xl" />
               ) : ghosts.some((ghost) => ghost.x === x && ghost.y === y) ? (
                 <FaGhost className="text-red-500 text-2xl" />
+              ) : walls.some((wall) => wall.x === x && wall.y === y) ? (
+                <div className="w-full h-full bg-gray-500"></div>
               ) : food.some((dot) => dot.x === x && dot.y === y) ? (
                 <FaCircle className="text-white text-sm" />
               ) : null}
@@ -212,4 +274,4 @@ const Pacman = () => {
   );
 };
 
-export default Pacman;
+export default PacManGame;
