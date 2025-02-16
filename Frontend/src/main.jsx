@@ -25,6 +25,7 @@ import SnakeGame from "./Pages/SnakeGame";
 import Game2048 from "./Pages/Game2048";
 import Minesweeper from "./Pages/Minesweeper.jsx";
 import Leaderboard from "./Components/Leaderboard.jsx";
+import Pacman from "./Pages/Pacman.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,6 +49,7 @@ const router = createBrowserRouter(
       <Route path="2048" element={<Game2048 />} />
       <Route path="minesweeper" element={<Minesweeper />} />
       <Route path="/:gameName/leaderboard" element={<Leaderboard />} />
+      <Route path="pacman" element={<Pacman />} />
 
       {/* Protected Routes */}
       <Route
