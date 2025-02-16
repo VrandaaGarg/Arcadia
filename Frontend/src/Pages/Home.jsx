@@ -4,7 +4,7 @@ import API from "../api";
 
 function Home() {
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function Home() {
       } catch (error) {
         console.error("Error fetching games:", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -32,6 +32,14 @@ function Home() {
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1120] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-32 px-4 sm:px-9 pt-24 flex flex-col items-center justify-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative overflow-hidden">
