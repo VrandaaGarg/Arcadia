@@ -60,16 +60,20 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Missing token or new password" });
     }
 
+    // Find the user by the reset token
     const user = await User.findOne({ resetToken: token });
     if (!user || user.resetTokenExpiry < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash new password and update
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
+    // Set the new password (plain text, will be hashed by the schema's pre-save hook)
+    user.password = newPassword;
+
+    // Clear resetToken and resetTokenExpiry
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
+
+    // Save the user (password will be hashed automatically before saving)
     await user.save();
 
     res.status(200).json({ message: "Password reset successful" });

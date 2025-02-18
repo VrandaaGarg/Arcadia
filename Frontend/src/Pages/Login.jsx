@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -109,6 +109,12 @@ const Login = () => {
                 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
                 transition-all duration-300"
             />
+            <NavLink
+              to="/forgot-password"
+              className="text-cyan-400 text-right hover:text-cyan-300 block text-sm mt-2"
+            >
+              Forgot Password?
+            </NavLink>
           </div>
 
           {/* Submit Button */}

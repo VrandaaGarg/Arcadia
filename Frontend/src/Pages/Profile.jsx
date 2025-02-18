@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-import { FaEnvelope, FaPhone, FaGamepad, FaTrophy, FaClock } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaPhone,
+  FaGamepad,
+  FaTrophy,
+  FaClock,
+} from "react-icons/fa";
 import API from "../api";
 
 const Profile = () => {
@@ -25,7 +31,7 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const userResponse = await API.get(`/api/users/${user._id}`);
-        console.log("User data:", userResponse.data);
+
         setUserData(userResponse.data);
         setEmail(userResponse.data.email);
         setPhone(userResponse.data.phone);
@@ -67,12 +73,8 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B1120]">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1120] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
       </div>
     );
   }
@@ -93,25 +95,28 @@ const Profile = () => {
 
   const getHighestScore = () => {
     if (!userData.gameScores?.length) return 0;
-    return Math.max(...userData.gameScores.map(score => score.highestScore));
+    return Math.max(...userData.gameScores.map((score) => score.highestScore));
   };
 
   const getTotalScore = () => {
     if (!userData.gameScores?.length) return 0;
-    return userData.gameScores.reduce((total, score) => total + score.highestScore, 0);
+    return userData.gameScores.reduce(
+      (total, score) => total + score.highestScore,
+      0
+    );
   };
 
   return (
     <div className="min-h-screen px-3 sm:px-4 py-8 sm:py-16 bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto relative z-10 space-y-4 sm:space-y-8"
       >
         {/* Profile Header */}
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
           className="bg-gray-800/50 mt-14 sm:mt-10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-8 border border-cyan-500/20"
@@ -130,7 +135,7 @@ const Profile = () => {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
             {/* Avatar */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05 }}
               className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 
                 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white
@@ -154,7 +159,11 @@ const Profile = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={!isEditing}
                     className={`w-full p-2 rounded-lg bg-gray-900/50 transition-all duration-200
-                      ${isEditing ? 'border border-cyan-500/50 focus:border-cyan-500' : 'border border-transparent'}`}
+                      ${
+                        isEditing
+                          ? "border border-cyan-500/50 focus:border-cyan-500"
+                          : "border border-transparent"
+                      }`}
                   />
                 </div>
 
@@ -166,7 +175,11 @@ const Profile = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     disabled={!isEditing}
                     className={`w-full p-2 rounded-lg bg-gray-900/50 transition-all duration-200
-                      ${isEditing ? 'border border-cyan-500/50 focus:border-cyan-500' : 'border border-transparent'}`}
+                      ${
+                        isEditing
+                          ? "border border-cyan-500/50 focus:border-cyan-500"
+                          : "border border-transparent"
+                      }`}
                   />
                 </div>
               </div>
@@ -192,7 +205,7 @@ const Profile = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           {/* Game Statistics */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-cyan-500/20"
@@ -221,17 +234,21 @@ const Profile = () => {
                         {getGameName(score.gameId)}
                       </span>
                     </div>
-                    <span className="text-cyan-400 font-bold text-sm sm:text-base">{score.highestScore}</span>
+                    <span className="text-cyan-400 font-bold text-sm sm:text-base">
+                      {score.highestScore}
+                    </span>
                   </motion.div>
                 ))
               ) : (
-                <p className="text-gray-400 text-center py-4 text-sm sm:text-base">No games played yet</p>
+                <p className="text-gray-400 text-center py-4 text-sm sm:text-base">
+                  No games played yet
+                </p>
               )}
             </div>
           </motion.div>
 
           {/* Account Details */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-cyan-500/20"
