@@ -6,10 +6,7 @@ const {
 
 const router = express.Router();
 
-// Forgot Password Route
 router.post("/forgot-password", forgotPassword);
-
-// Reset Password Route
 router.post("/reset-password", resetPassword);
 
 module.exports = router;

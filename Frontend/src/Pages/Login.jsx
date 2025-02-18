@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
 const Login = () => {
   const location = useLocation();
@@ -13,38 +13,36 @@ const Login = () => {
     emailOrUsername: "",
     password: "",
   });
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
-
+  console.log(loginData);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      const response = await axios.post(
-        `${API_URL}/api/users/login`,
-        {
-          emailOrUsername: loginData.emailOrUsername,
-          password: loginData.password
-        }
-      );
+      const response = await axios.post(`${API_URL}/api/users/login`, {
+        emailOrUsername: loginData.emailOrUsername,
+        password: loginData.password,
+      });
 
       if (response.data && response.data.user) {
         // Update global auth state
         login(response.data.user);
-        setMessage({ text: 'Login successful!', type: 'success' });
+        setMessage({ text: "Login successful!", type: "success" });
+
         // Redirect to the attempted page or home
-        const destination = location.state?.from?.pathname || '/';
+        const destination = location.state?.from?.pathname || "/";
         navigate(destination);
       }
     } catch (error) {
-      setMessage({ 
-        text: error.response?.data?.message || 'Login failed', 
-        type: 'error' 
+      setMessage({
+        text: error.response?.data?.message || "Login failed",
+        type: "error",
       });
     } finally {
       setIsLoading(false);
@@ -64,11 +62,13 @@ const Login = () => {
         </h1>
 
         {message.text && (
-          <div className={`mb-4 p-4 rounded-lg text-center ${
-            message.type === 'success' 
-              ? 'bg-green-500/20 text-green-400' 
-              : 'bg-red-500/20 text-red-400'
-          }`}>
+          <div
+            className={`mb-4 p-4 rounded-lg text-center ${
+              message.type === "success"
+                ? "bg-green-500/20 text-green-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
             {message.text}
           </div>
         )}
