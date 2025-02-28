@@ -39,8 +39,6 @@ const registerUser = async (req, res) => {
 // ✅ Login User (Compare hashed password)
 const loginUser = async (req, res) => {
   try {
-    console.log("Login request received:", req.body);
-
     const { emailOrUsername, password } = req.body;
     if (!emailOrUsername || !password) {
       return res.status(400).json({ message: "Missing credentials" });
