@@ -5,10 +5,62 @@ import { BsFillCircleFill } from "react-icons/bs";
 import LeaderboardButton from "../Components/LeaderboardButton";
 import API from "../api";
 
+const MAZE_LAYOUTS = [
+  {
+    name: "Classic",
+    pattern: [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,0,1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+      [1,0,1,1,1,0,1,0,1,1,1,0,1,0,1],
+      [1,0,0,0,1,0,1,0,0,0,0,0,0,0,1],
+      [1,0,1,0,1,0,1,0,1,1,1,1,1,0,1],
+      [1,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ]
+  },
+  {
+    name: "Maze Runner",
+    pattern: [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
+      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+      [1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
+      [1,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
+      [1,0,0,0,1,0,1,1,1,0,1,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],
+      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+      [1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
+      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
+      [1,0,0,0,1,1,1,1,1,1,1,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ]
+  }
+];
+
+const DIFFICULTY_SETTINGS = {
+  easy: { ghostSpeed: 600, powerUpDuration: 15000, ghostCount: 2 },
+  medium: { ghostSpeed: 400, powerUpDuration: 10000, ghostCount: 3 },
+  hard: { ghostSpeed: 300, powerUpDuration: 7000, ghostCount: 4 }
+};
+
 const PacManGame = () => {
   const [user, setUser] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [scoreToSubmit, setScoreToSubmit] = useState(null);
+  const [difficulty, setDifficulty] = useState('medium');
+  const [currentLayout, setCurrentLayout] = useState(0);
+  const [powerUpType, setPowerUpType] = useState('normal');
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -63,42 +115,66 @@ const PacManGame = () => {
   const [isPoweredUp, setIsPoweredUp] = useState(false);
   const [powerTimer, setPowerTimer] = useState(null);
 
-  // Create maze with walls, dots, and power-ups
-  const createMaze = useCallback(() => {
-    const maze = Array(GRID_SIZE).fill().map(() => 
-      Array(GRID_SIZE).fill().map(() => ({
-        isWall: false,
-        hasDot: true,
+  // Add new function to handle layout change
+  const handleLayoutChange = (newLayout) => {
+    setCurrentLayout(newLayout);
+    // Reset game state with new layout
+    setPacman({ x: 1, y: 1, direction: 'right' });
+    setGhosts([
+      { x: 13, y: 1, color: 'red' },
+      { x: 13, y: 13, color: 'pink' },
+      { x: 1, y: 13, color: 'cyan' },
+    ]);
+    setScore(0);
+    setIsGameOver(false);
+    setIsPoweredUp(false);
+    if (powerTimer) clearTimeout(powerTimer);
+    setMaze(createMaze(newLayout));
+  };
+
+  // Add new function to handle difficulty change
+  const handleDifficultyChange = (newDifficulty) => {
+    setDifficulty(newDifficulty);
+    // Reset game state
+    setPacman({ x: 1, y: 1, direction: 'right' });
+    setGhosts([
+      { x: 13, y: 1, color: 'red' },
+      { x: 13, y: 13, color: 'pink' },
+      { x: 1, y: 13, color: 'cyan' },
+    ].slice(0, DIFFICULTY_SETTINGS[newDifficulty].ghostCount));
+    setScore(0);
+    setIsGameOver(false);
+    setIsPoweredUp(false);
+    if (powerTimer) clearTimeout(powerTimer);
+    setMaze(createMaze(currentLayout));
+  };
+
+  // Modify createMaze to accept layout parameter
+  const createMaze = useCallback((layoutIndex = currentLayout) => {
+    const mazeTemplate = MAZE_LAYOUTS[layoutIndex].pattern;
+    const maze = mazeTemplate.map(row => 
+      row.map(cell => ({
+        isWall: cell === 1,
+        hasDot: cell === 0,
         hasPowerUp: false
       }))
     );
 
-    // Add walls in a pac-man like pattern
-    for (let i = 0; i < GRID_SIZE; i++) {
-      for (let j = 0; j < GRID_SIZE; j++) {
-        // Border walls
-        if (i === 0 || i === GRID_SIZE - 1 || j === 0 || j === GRID_SIZE - 1) {
-          maze[i][j].isWall = true;
-          maze[i][j].hasDot = false;
-        }
-        // Internal walls pattern
-        if ((i % 2 === 0 && j % 2 === 0) && 
-            (i !== 0 && i !== GRID_SIZE - 1 && j !== 0 && j !== GRID_SIZE - 1)) {
-          maze[i][j].isWall = true;
-          maze[i][j].hasDot = false;
-        }
-      }
-    }
+    // Add power-ups strategically
+    const powerUpPositions = [
+      {x: 1, y: 1}, {x: 1, y: GRID_SIZE-2},
+      {x: GRID_SIZE-2, y: 1}, {x: GRID_SIZE-2, y: GRID_SIZE-2}
+    ];
 
-    // Add power-ups in corners
-    maze[1][1].hasPowerUp = true;
-    maze[1][GRID_SIZE-2].hasPowerUp = true;
-    maze[GRID_SIZE-2][1].hasPowerUp = true;
-    maze[GRID_SIZE-2][GRID_SIZE-2].hasPowerUp = true;
-    maze[1][1].hasDot = false;
+    powerUpPositions.forEach(pos => {
+      if (!maze[pos.x]?.[pos.y] && !maze[pos.x][pos.y].isWall) {
+        maze[pos.x][pos.y].hasPowerUp = true;
+        maze[pos.x][pos.y].hasDot = false;
+      }
+    });
 
     return maze;
-  }, []);
+  }, [currentLayout]);
 
   const [maze, setMaze] = useState(createMaze);
 
@@ -229,10 +305,10 @@ const PacManGame = () => {
   // Ghost movement interval
   useEffect(() => {
     if (!isGameOver) {
-      const interval = setInterval(moveGhosts, GHOST_SPEED);
+      const interval = setInterval(moveGhosts, DIFFICULTY_SETTINGS[difficulty].ghostSpeed);
       return () => clearInterval(interval);
     }
-  }, [moveGhosts, isGameOver]);
+  }, [moveGhosts, isGameOver, difficulty]);
 
   // Update score submission logic
   const submitScore = async (finalScore) => {
@@ -263,20 +339,18 @@ const PacManGame = () => {
   };
 
   const restartGame = useCallback(() => {
-    if (isGameOver) {
-      setPacman({ x: 1, y: 1, direction: 'right' });
-      setGhosts([
-        { x: 13, y: 1, color: 'red' },
-        { x: 13, y: 13, color: 'pink' },
-        { x: 1, y: 13, color: 'cyan' },
-      ]);
-      setScore(0);
-      setIsGameOver(false);
-      setIsPoweredUp(false);
-      if (powerTimer) clearTimeout(powerTimer);
-      setMaze(createMaze());
-    }
-  }, [isGameOver, powerTimer, createMaze]);
+    setPacman({ x: 1, y: 1, direction: 'right' });
+    setGhosts([
+      { x: 13, y: 1, color: 'red' },
+      { x: 13, y: 13, color: 'pink' },
+      { x: 1, y: 13, color: 'cyan' },
+    ].slice(0, DIFFICULTY_SETTINGS[difficulty].ghostCount));
+    setScore(0);
+    setIsGameOver(false);
+    setIsPoweredUp(false);
+    if (powerTimer) clearTimeout(powerTimer);
+    setMaze(createMaze());
+  }, [difficulty, powerTimer, createMaze]);
 
   const renderCell = (x, y) => {
     const isPacman = pacman.x === x && pacman.y === y;
@@ -308,7 +382,13 @@ const PacManGame = () => {
     }
 
     if (cell.hasPowerUp) {
-      return <BsFillCircleFill className="text-yellow-300 animate-pulse" size={12} />;
+      return (
+        <motion.div
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="w-3 h-3 bg-yellow-300 rounded-full shadow-lg shadow-yellow-300/50"
+        />
+      );
     }
 
     if (cell.hasDot) {
@@ -317,6 +397,32 @@ const PacManGame = () => {
 
     return null;
   };
+
+  const renderGameSettings = () => (
+    <div className="flex flex-wrap justify-center gap-4 mb-8">
+      <select
+        value={difficulty}
+        onChange={(e) => handleDifficultyChange(e.target.value)}
+        className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-4 py-2 rounded-xl text-gray-200"
+      >
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+
+      <select
+        value={currentLayout}
+        onChange={(e) => handleLayoutChange(Number(e.target.value))}
+        className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-4 py-2 rounded-xl text-gray-200"
+      >
+        {MAZE_LAYOUTS.map((layout, index) => (
+          <option key={index} value={index}>
+            {layout.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
   return (
     <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
@@ -330,6 +436,8 @@ const PacManGame = () => {
         <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
           Pac-Man
         </h1>
+
+        {renderGameSettings()}
 
         {/* Score & Controls Info */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
