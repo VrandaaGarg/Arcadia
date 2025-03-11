@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const sudokuPuzzles = [
   [
@@ -78,6 +78,7 @@ function Sudoku() {
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
   const [board, setBoard] = useState([...sudokuPuzzles[selectedPuzzle]]);
   const [solved, setSolved] = useState(false);
+  const [popup, setPopup] = useState({ show: false, type: "", message: "" });
 
   const handleChange = (row, col, value) => {
     if (value === "" || /^[1-9]$/.test(value)) {
@@ -133,12 +134,81 @@ function Sudoku() {
   const checkSolution = () => {
     setBoard([...solutionBoard[selectedPuzzle]]);
     setSolved(true);
+    setPopup({
+      show: true,
+      type: "solution",
+      message: "Here's the correct solution!"
+    });
+    // Auto-hide after 5 seconds
+    setTimeout(() => setPopup({ show: false, type: "", message: "" }), 5000);
+  };
+
+  // Close popup function
+  const closePopup = () => {
+    setPopup({ show: false, type: "", message: "" });
   };
 
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       {/* Background accent */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
+
+      {/* Popup System */}
+      <AnimatePresence>
+        {popup.show && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md"
+          >
+            <div 
+              className={`rounded-xl shadow-2xl p-6 backdrop-blur-md flex items-center gap-4 border
+                ${popup.type === "success" ? "bg-emerald-500/20 border-emerald-500/50" : 
+                  popup.type === "error" ? "bg-red-500/20 border-red-500/50" : 
+                  "bg-blue-500/20 border-blue-500/50"}`}
+            >
+              <div className={`p-3 rounded-full 
+                ${popup.type === "success" ? "bg-emerald-500" : 
+                  popup.type === "error" ? "bg-red-500" : 
+                  "bg-blue-500"}`}>
+                {popup.type === "success" ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : popup.type === "error" ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <h4 className={`font-bold text-lg 
+                  ${popup.type === "success" ? "text-emerald-400" : 
+                    popup.type === "error" ? "text-red-400" : 
+                    "text-blue-400"}`}>
+                  {popup.type === "success" ? "Success!" : 
+                   popup.type === "error" ? "Incorrect Solution" : 
+                   "Solution"}
+                </h4>
+                <p className="text-gray-200">{popup.message}</p>
+              </div>
+              <button 
+                onClick={closePopup}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
         <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
@@ -198,45 +268,69 @@ function Sudoku() {
            rounded-xl transition-all duration-300 transform hover:scale-105 
            hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] font-medium"
             onClick={() => {
-              const isFilled = board.every((row) =>
-                row.every((cell) => cell !== "")
-              ); // Check if all boxes are filled
+              const boardFilled = isFilled(board);
 
               if (checkWin()) {
-                alert("🎉 Congratulations! You solved it!");
+                setPopup({
+                  show: true,
+                  type: "success",
+                  message: "Congratulations! You solved the puzzle correctly."
+                });
+                // Auto-hide after 5 seconds
+                setTimeout(() => setPopup({ show: false, type: "", message: "" }), 5000);
               } else {
-                if (!isFilled) {
-                  const showSolution = window.confirm(
-                    "Fill all the boxes to check your solution. Do you want to see the correct answer?"
-                  );
-                  if (showSolution) {
-                    checkSolution();
-                  }
+                if (!boardFilled) {
+                  setPopup({
+                    show: true,
+                    type: "error",
+                    message: "Fill all the boxes to check your solution properly."
+                  });
+                  // Don't auto-hide error message for incomplete puzzle
                 } else {
-                  const showSolution = window.confirm(
-                    "❌ Your solution is incorrect. Do you want to see the correct answer?"
-                  );
-                  if (showSolution) {
-                    checkSolution();
-                  }
+                  setPopup({
+                    show: true,
+                    type: "error",
+                    message: "Your solution is incorrect. Would you like to see the answer?"
+                  });
+                  // Don't auto-hide to give user time to decide
                 }
               }
             }}
           >
             Check Solution
           </motion.button>
+          
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setBoard([...sudokuPuzzles[selectedPuzzle]]);
               setSolved(false);
+              setPopup({ show: false, type: "", message: "" });
             }}
             className="px-6 py-3 bg-gray-800/50 backdrop-blur-sm border border-red-500/20 
               hover:border-red-500/40 rounded-xl transition-all duration-300 text-red-400 hover:text-red-300"
           >
             Reset Board
           </motion.button>
+
+          {/* Show solution button - appears only when error popup is shown */}
+          <AnimatePresence>
+            {popup.show && popup.type === "error" && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-blue-500/20 backdrop-blur-sm border border-blue-500/30 
+                  hover:border-blue-500/50 rounded-xl transition-all duration-300 text-blue-400 hover:text-blue-300"
+                onClick={checkSolution}
+              >
+                Show Solution
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
