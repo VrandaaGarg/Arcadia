@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
 const Login = () => {
   const location = useLocation();
@@ -13,7 +13,7 @@ const Login = () => {
     emailOrUsername: "",
     password: "",
   });
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -23,33 +23,39 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      const response = await axios.post(
-        `${API_URL}/api/users/login`,
-        {
-          emailOrUsername: loginData.emailOrUsername,
-          password: loginData.password
-        }
-      );
+      const response = await axios.post(`${API_URL}/api/users/login`, {
+        emailOrUsername: loginData.emailOrUsername,
+        password: loginData.password,
+      });
 
       if (response.data && response.data.user) {
         // Update global auth state
         login(response.data.user);
-        setMessage({ text: 'Login successful!', type: 'success' });
+        setMessage({ text: "Login successful!", type: "success" });
+
         // Redirect to the attempted page or home
-        const destination = location.state?.from?.pathname || '/';
+        const destination = location.state?.from?.pathname || "/";
         navigate(destination);
       }
     } catch (error) {
-      setMessage({ 
-        text: error.response?.data?.message || 'Login failed', 
-        type: 'error' 
+      setMessage({
+        text: error.response?.data?.message || "Login failed",
+        type: "error",
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1120] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
@@ -64,11 +70,13 @@ const Login = () => {
         </h1>
 
         {message.text && (
-          <div className={`mb-4 p-4 rounded-lg text-center ${
-            message.type === 'success' 
-              ? 'bg-green-500/20 text-green-400' 
-              : 'bg-red-500/20 text-red-400'
-          }`}>
+          <div
+            className={`mb-4 p-4 rounded-lg text-center ${
+              message.type === "success"
+                ? "bg-green-500/20 text-green-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -109,6 +117,12 @@ const Login = () => {
                 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
                 transition-all duration-300"
             />
+            <NavLink
+              to="/forgot-password"
+              className="text-cyan-400 text-right hover:text-cyan-300 block text-sm mt-2"
+            >
+              Forgot Password?
+            </NavLink>
           </div>
 
           {/* Submit Button */}

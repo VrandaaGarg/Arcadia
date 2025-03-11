@@ -137,23 +137,20 @@ function MemoryCardGame() {
         <h1 className="text-4xl text-center md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
           Memory Card Game
         </h1>
-
         {/* Score & Leaderboard */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <p className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+          <p className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-purple-400 font-bold text-sm sm:text-xl">
             Moves: {moves}
           </p>
-          <LeaderboardButton gameLink="memorycardgame" />{" "}
+
           {/* Pass link without "/" */}
         </div>
-
         {/* Win Message - Only show when there are cards and all are matched */}
         {cards.length > 0 && matched.length === cards.length && (
           <div className="text-2xl font-bold text-cyan-400 mb-8 animate-bounce">
             🎉 Congratulations! You Won! 🎉
           </div>
         )}
-
         {/* Game Grid */}
         <div className="grid grid-cols-4  gap-2 md:gap-4 mb-8">
           {cards.map((card, index) => (
@@ -183,14 +180,16 @@ function MemoryCardGame() {
             </button>
           ))}
         </div>
-
         {/* Control Button */}
-        <button
-          onClick={startGame}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
-        >
-          New Game
-        </button>
+        <div className="flex flex-wrap justify-center gap-4 mt-3.5">
+          <button
+            onClick={startGame}
+            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          >
+            New Game
+          </button>
+          <LeaderboardButton gameLink="memorycardgame" />{" "}
+        </div>
       </div>
     </div>
   );

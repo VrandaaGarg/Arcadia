@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 function TicTacToe() {
   // Add new state variables for game mode and difficulty
-  const [gameMode, setGameMode] = useState('pvp'); // 'pvp' or 'pvc'
-  const [difficulty, setDifficulty] = useState('easy'); // 'easy', 'medium', 'hard'
+  const [gameMode, setGameMode] = useState("pvp"); // 'pvp' or 'pvc'
+  const [difficulty, setDifficulty] = useState("easy"); // 'easy', 'medium', 'hard'
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [score, setScore] = useState({ X: 0, O: 0 });
@@ -16,7 +16,7 @@ function TicTacToe() {
 
   // Add computer move effect
   useEffect(() => {
-    if (gameMode === 'pvc' && !isXNext && !winner && !isDraw) {
+    if (gameMode === "pvc" && !isXNext && !winner && !isDraw) {
       const timer = setTimeout(() => makeComputerMove(), 500);
       return () => clearTimeout(timer);
     }
@@ -26,10 +26,10 @@ function TicTacToe() {
   const makeComputerMove = () => {
     let move;
     switch (difficulty) {
-      case 'hard':
+      case "hard":
         move = getBestMove(board);
         break;
-      case 'medium':
+      case "medium":
         move = Math.random() < 0.7 ? getBestMove(board) : getRandomMove();
         break;
       default:
@@ -39,22 +39,26 @@ function TicTacToe() {
   };
 
   const getRandomMove = () => {
-    const emptySquares = board.map((sq, i) => sq === null ? i : null).filter(sq => sq !== null);
+    const emptySquares = board
+      .map((sq, i) => (sq === null ? i : null))
+      .filter((sq) => sq !== null);
     return emptySquares[Math.floor(Math.random() * emptySquares.length)];
   };
 
   const getBestMove = (currentBoard) => {
     // Minimax algorithm for unbeatable AI
-    const emptyCells = currentBoard.map((cell, index) => cell === null ? index : null).filter(cell => cell !== null);
-    
+    const emptyCells = currentBoard
+      .map((cell, index) => (cell === null ? index : null))
+      .filter((cell) => cell !== null);
+
     if (calculateWinner(currentBoard)) return null;
-    
+
     let bestScore = -Infinity;
     let bestMove = null;
 
-    emptyCells.forEach(cell => {
+    emptyCells.forEach((cell) => {
       const boardCopy = [...currentBoard];
-      boardCopy[cell] = 'O';
+      boardCopy[cell] = "O";
       const score = minimax(boardCopy, 0, false);
       if (score > bestScore) {
         bestScore = score;
@@ -67,25 +71,27 @@ function TicTacToe() {
 
   const minimax = (board, depth, isMaximizing) => {
     const winner = calculateWinner(board);
-    if (winner === 'O') return 10 - depth;
-    if (winner === 'X') return depth - 10;
+    if (winner === "O") return 10 - depth;
+    if (winner === "X") return depth - 10;
     if (!board.includes(null)) return 0;
 
-    const emptyCells = board.map((cell, index) => cell === null ? index : null).filter(cell => cell !== null);
+    const emptyCells = board
+      .map((cell, index) => (cell === null ? index : null))
+      .filter((cell) => cell !== null);
 
     if (isMaximizing) {
       let bestScore = -Infinity;
-      emptyCells.forEach(cell => {
+      emptyCells.forEach((cell) => {
         const boardCopy = [...board];
-        boardCopy[cell] = 'O';
+        boardCopy[cell] = "O";
         bestScore = Math.max(bestScore, minimax(boardCopy, depth + 1, false));
       });
       return bestScore;
     } else {
       let bestScore = Infinity;
-      emptyCells.forEach(cell => {
+      emptyCells.forEach((cell) => {
         const boardCopy = [...board];
-        boardCopy[cell] = 'X';
+        boardCopy[cell] = "X";
         bestScore = Math.min(bestScore, minimax(boardCopy, depth + 1, true));
       });
       return bestScore;
@@ -96,7 +102,7 @@ function TicTacToe() {
     e.preventDefault();
     setPlayers({
       X: tempNames.X || "Player 1",
-      O: tempNames.O || "Player 2"
+      O: tempNames.O || "Player 2",
     });
     setIsSettingNames(false);
   };
@@ -136,35 +142,38 @@ function TicTacToe() {
     return (
       <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
-        
+
         <div className="relative z-10 w-full max-w-md mx-auto">
           <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
             Tic Tac Toe
           </h1>
 
-          <form onSubmit={handleStartGame} className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20">
+          <form
+            onSubmit={handleStartGame}
+            className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20"
+          >
             {/* Game Mode Selection */}
             <div className="space-y-4">
               <label className="block text-cyan-400 mb-2">Game Mode</label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
-                  onClick={() => setGameMode('pvp')}
+                  onClick={() => setGameMode("pvp")}
                   className={`py-2 rounded-lg transition-all duration-300 ${
-                    gameMode === 'pvp' 
-                      ? 'bg-cyan-500 text-white' 
-                      : 'bg-slate-700 text-gray-300'
+                    gameMode === "pvp"
+                      ? "bg-cyan-500 text-white"
+                      : "bg-slate-700 text-gray-300"
                   }`}
                 >
                   Player👱‍♂️ vs Player👨
                 </button>
                 <button
                   type="button"
-                  onClick={() => setGameMode('pvc')}
+                  onClick={() => setGameMode("pvc")}
                   className={`py-2 rounded-lg transition-all duration-300 ${
-                    gameMode === 'pvc' 
-                      ? 'bg-cyan-500 text-white' 
-                      : 'bg-slate-700 text-gray-300'
+                    gameMode === "pvc"
+                      ? "bg-cyan-500 text-white"
+                      : "bg-slate-700 text-gray-300"
                   }`}
                 >
                   vs AI 🤖
@@ -173,7 +182,7 @@ function TicTacToe() {
             </div>
 
             {/* Difficulty Selection (Only for PvC) */}
-            {gameMode === 'pvc' && (
+            {gameMode === "pvc" && (
               <div className="space-y-2">
                 <label className="block text-cyan-400 mb-2">Difficulty</label>
                 <select
@@ -191,23 +200,31 @@ function TicTacToe() {
             {/* Player Names */}
             <div className="space-y-4">
               <div>
-                <label className="block text-cyan-400 mb-2">Player X Name:</label>
+                <label className="block text-cyan-400 mb-2">
+                  Player X Name:
+                </label>
                 <input
                   type="text"
                   placeholder="Enter Player X name"
                   value={tempNames.X}
-                  onChange={(e) => setTempNames(prev => ({ ...prev, X: e.target.value }))}
+                  onChange={(e) =>
+                    setTempNames((prev) => ({ ...prev, X: e.target.value }))
+                  }
                   className="w-full px-4 py-2 bg-slate-900/50 border border-cyan-500/20 rounded-lg text-white focus:outline-none focus:border-cyan-500/50"
                 />
               </div>
-              {gameMode === 'pvp' && (
+              {gameMode === "pvp" && (
                 <div>
-                  <label className="block text-cyan-400 mb-2">Player O Name:</label>
+                  <label className="block text-cyan-400 mb-2">
+                    Player O Name:
+                  </label>
                   <input
                     type="text"
                     placeholder="Enter Player O name"
                     value={tempNames.O}
-                    onChange={(e) => setTempNames(prev => ({ ...prev, O: e.target.value }))}
+                    onChange={(e) =>
+                      setTempNames((prev) => ({ ...prev, O: e.target.value }))
+                    }
                     className="w-full px-4 py-2 bg-slate-900/50 border border-cyan-500/20 rounded-lg text-white focus:outline-none focus:border-cyan-500/50"
                   />
                 </div>
@@ -246,12 +263,6 @@ function TicTacToe() {
               <p className="text-xl font-bold">O: {score.O}</p>
             </div>
           </div>
-          <NavLink
-            to="/leaderboard"
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-          >
-            🏆 Leaderboard
-          </NavLink>
         </div>
 
         {/* Game Status */}
@@ -264,7 +275,8 @@ function TicTacToe() {
         {/* Current Player */}
         {!winner && !isDraw && (
           <p className="text-xl mb-8 text-cyan-400">
-            Current Turn: <span className="font-bold">{players[isXNext ? 'X' : 'O']}</span>
+            Current Turn:{" "}
+            <span className="font-bold">{players[isXNext ? "X" : "O"]}</span>
           </p>
         )}
 
@@ -279,7 +291,13 @@ function TicTacToe() {
                 bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 rounded-xl
                 transition-all duration-300 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]
                 disabled:cursor-not-allowed
-                ${cell === 'X' ? 'text-rose-400' : cell === 'O' ? 'text-cyan-400' : 'text-gray-400'}`}
+                ${
+                  cell === "X"
+                    ? "text-rose-400"
+                    : cell === "O"
+                    ? "text-cyan-400"
+                    : "text-gray-400"
+                }`}
             >
               {cell}
             </button>
