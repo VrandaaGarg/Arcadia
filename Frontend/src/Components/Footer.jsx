@@ -1,8 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaDiscord, FaTwitch, FaYoutube } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import { MdEmail, MdBugReport } from "react-icons/md";
 
 const Footer = () => {
+  const handleBugReport = () => {
+    const emailAddress = 'vrandacodz@gmail.com';
+    const subject = 'Bug/Feedback Report for Arcadia';
+    window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}`;
+  };
+
   return (
     <footer className="bg-[#0B1120] border-t border-cyan-500/20 text-gray-300 py-12 px-4 sm:px-8">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
@@ -13,17 +20,35 @@ const Footer = () => {
           <p className="text-cyan-400/80">Where Gaming Legends Rise 🏆</p>
         </div>
 
-        <div className="flex gap-4 sm:gap-6 text-2xl">
-          {[FaTwitter, FaDiscord, FaTwitch, FaYoutube].map((Icon, index) => (
-            <a
-              key={index}
-              href="#"
-              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-125 transform-gpu"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <Icon />
-            </a>
-          ))}
+        <div className="flex items-center gap-6">
+          {/* GitHub Link */}
+          <a
+            href="https://github.com/VrandaaGarg/Arcadia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-125 transform-gpu"
+          >
+            <FaGithub className="text-2xl" />
+          </a>
+
+          {/* Email Link */}
+          <a
+            href="mailto:vrandacodz@gmail.com"
+            className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-125 transform-gpu"
+          >
+            <MdEmail className="text-2xl" />
+          </a>
+
+          {/* Bug Report Button */}
+          <button
+            onClick={handleBugReport}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 
+              hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 rounded-lg 
+              transition-all duration-300 hover:scale-105 group"
+          >
+            <MdBugReport className="text-xl text-cyan-400 group-hover:text-cyan-300" />
+            <span className="text-cyan-400 group-hover:text-cyan-300 font-medium">Report Bug</span>
+          </button>
         </div>
       </div>
 
