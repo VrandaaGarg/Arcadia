@@ -133,7 +133,6 @@ const addGameScore = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user) {
-      // Remove scores of the non-existent user from the game leaderboard
       game.topScores = game.topScores.filter(
         (entry) => entry.userId.toString() !== userId
       );
@@ -143,38 +142,60 @@ const addGameScore = async (req, res) => {
         .json({ message: "User not found, scores removed" });
     }
 
-    // Check if user already has a score in this game
     let existingEntry = game.topScores.find(
       (entry) => entry.userId.toString() === userId
     );
 
     if (existingEntry) {
-      // Update score only if the new score is higher
-      if (score > existingEntry.score) {
-        existingEntry.score = score;
+      if (game._id.toString() === "67cfe70abeafad4344f82820") {
+        //For memory card game, store the lowest score
+        if (score < existingEntry.score) {
+          existingEntry.score = score;
+        } else {
+          return res
+            .status(200)
+            .json({ message: "New score is not lower, no update made" });
+        }
       } else {
-        return res
-          .status(200)
-          .json({ message: "New score is not higher, no update made" });
+        //For other games, store the highest score
+        if (score > existingEntry.score) {
+          existingEntry.score = score;
+        } else {
+          return res
+            .status(200)
+            .json({ message: "New score is not higher, no update made" });
+        }
       }
     } else {
-      // Add new score if the user is not in the leaderboard yet
       game.topScores.push({ userId, username: user.username, score });
     }
 
-    // Sort leaderboard and keep only top 10 scores
-    game.topScores.sort((a, b) => b.score - a.score);
+    if (game._id.toString() === "67cfe70abeafad4344f82820") {
+      // Sort in ascending order for memory card game
+      game.topScores.sort((a, b) => a.score - b.score);
+    } else {
+      // Sort in descending order for other games
+      game.topScores.sort((a, b) => b.score - a.score);
+    }
+
     game.topScores = game.topScores.slice(0, 10);
     await game.save();
 
-    // Update User's highest score for this game
     let userGameScore = user.gameScores.find(
       (g) => g.gameId.toString() === req.params.id
     );
 
     if (userGameScore) {
-      if (score > userGameScore.highestScore) {
-        userGameScore.highestScore = score;
+      if (game._id.toString() === "67cfe70abeafad4344f82820") {
+        // For this game, store the lowest score
+        if (score < userGameScore.highestScore) {
+          userGameScore.highestScore = score;
+        }
+      } else {
+        // For other games, store the highest score
+        if (score > userGameScore.highestScore) {
+          userGameScore.highestScore = score;
+        }
       }
     } else {
       user.gameScores.push({ gameId: req.params.id, highestScore: score });
@@ -215,7 +236,9 @@ const getLeaderboard = async (req, res) => {
       const userIdStr = entry.userId._id.toString();
       if (
         !userHighestScores.has(userIdStr) ||
-        entry.score > userHighestScores.get(userIdStr).score
+        (game._id.toString() === "67cfe70abeafad4344f82820"
+          ? entry.score < userHighestScores.get(userIdStr).score // Ascending for this game
+          : entry.score > userHighestScores.get(userIdStr).score) // Descending for others
       ) {
         userHighestScores.set(userIdStr, {
           userId: entry.userId._id,
@@ -227,8 +250,10 @@ const getLeaderboard = async (req, res) => {
     });
 
     // Convert to sorted leaderboard array
-    const leaderboard = Array.from(userHighestScores.values()).sort(
-      (a, b) => b.score - a.score
+    const leaderboard = Array.from(userHighestScores.values()).sort((a, b) =>
+      game._id.toString() === "67cfe70abeafad4344f82820"
+        ? a.score - b.score
+        : b.score - a.score
     );
 
     res.status(200).json({ gameName: game.name, leaderboard });
