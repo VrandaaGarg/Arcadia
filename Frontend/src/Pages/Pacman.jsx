@@ -49,9 +49,31 @@ const MAZE_LAYOUTS = [
 ];
 
 const DIFFICULTY_SETTINGS = {
-  easy: { ghostSpeed: 600, powerUpDuration: 15000, ghostCount: 2 },
-  medium: { ghostSpeed: 400, powerUpDuration: 10000, ghostCount: 3 },
-  hard: { ghostSpeed: 300, powerUpDuration: 7000, ghostCount: 4 }
+  easy: { 
+    ghostSpeed: 800, 
+    powerUpDuration: 15000, 
+    ghostCount: 2,
+    ghostBehavior: 'simple'  // Ghosts move more predictably
+  },
+  medium: { 
+    ghostSpeed: 500, 
+    powerUpDuration: 10000, 
+    ghostCount: 3,
+    ghostBehavior: 'normal'  // Standard ghost behavior
+  },
+  hard: { 
+    ghostSpeed: 300, 
+    powerUpDuration: 7000, 
+    ghostCount: 4,
+    ghostBehavior: 'aggressive'  // Ghosts move more strategically
+  }
+};
+
+// Add this new constant for ghost state management
+const GHOST_STATES = {
+  CHASE: 'chase',
+  SCATTER: 'scatter',
+  FRIGHTENED: 'frightened'
 };
 
 const PacManGame = () => {
@@ -114,6 +136,10 @@ const PacManGame = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isPoweredUp, setIsPoweredUp] = useState(false);
   const [powerTimer, setPowerTimer] = useState(null);
+
+  // Add new state for ghost management
+  const [ghostState, setGhostState] = useState(GHOST_STATES.CHASE);
+  const [lastGhostUpdate, setLastGhostUpdate] = useState(Date.now());
 
   // Add new function to handle layout change
   const handleLayoutChange = (newLayout) => {
@@ -178,38 +204,106 @@ const PacManGame = () => {
 
   const [maze, setMaze] = useState(createMaze);
 
+  // Optimize moveGhosts to be independent of pacman movement
   const moveGhosts = useCallback(() => {
+    if (isGameOver) return;
+    
+    const currentTime = Date.now();
+    const timeSinceLastUpdate = currentTime - lastGhostUpdate;
+    
+    if (timeSinceLastUpdate < DIFFICULTY_SETTINGS[difficulty].ghostSpeed) return;
+    
+    setLastGhostUpdate(currentTime);
+    
     setGhosts(prevGhosts => prevGhosts.map(ghost => {
       const possibleMoves = [
         { x: ghost.x + 1, y: ghost.y },
         { x: ghost.x - 1, y: ghost.y },
         { x: ghost.x, y: ghost.y + 1 },
         { x: ghost.x, y: ghost.y - 1 }
-      ].filter(move => !maze[move.x]?.[move.y]?.isWall);
+      ].filter(move => {
+        if (!maze[move.x] || !maze[move.y]) return false;
+        return !maze[move.x][move.y].isWall;
+      });
 
-      if (isPoweredUp) {
-        // Move away from Pacman when powered up
-        possibleMoves.sort((a, b) => 
-          (Math.abs(b.x - pacman.x) + Math.abs(b.y - pacman.y)) -
-          (Math.abs(a.x - pacman.x) + Math.abs(a.y - pacman.y))
-        );
-      } else {
-        // Move towards Pacman
-        possibleMoves.sort((a, b) => 
-          (Math.abs(a.x - pacman.x) + Math.abs(a.y - pacman.y)) -
-          (Math.abs(b.x - pacman.x) + Math.abs(b.y - pacman.y))
-        );
+      if (possibleMoves.length === 0) return ghost;
+
+      let nextMove;
+      
+      switch (ghostState) {
+        case GHOST_STATES.FRIGHTENED:
+          // Run away from Pacman
+          nextMove = possibleMoves.reduce((farthest, current) => {
+            const currentDist = Math.abs(current.x - pacman.x) + Math.abs(current.y - pacman.y);
+            const farthestDist = Math.abs(farthest.x - pacman.x) + Math.abs(farthest.y - pacman.y);
+            return currentDist > farthestDist ? current : farthest;
+          }, possibleMoves[0]);
+          break;
+
+        case GHOST_STATES.SCATTER:
+          // Move randomly
+          nextMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+          break;
+
+        default: // CHASE
+          // Use difficulty-based behavior
+          const behavior = DIFFICULTY_SETTINGS[difficulty].ghostBehavior;
+          
+          if (behavior === 'aggressive') {
+            // Predict Pacman's next position
+            const predictedPos = {
+              x: pacman.x + (pacman.direction === 'up' ? -1 : pacman.direction === 'down' ? 1 : 0),
+              y: pacman.y + (pacman.direction === 'left' ? -1 : pacman.direction === 'right' ? 1 : 0)
+            };
+            nextMove = possibleMoves.reduce((nearest, current) => {
+              const currentDist = Math.abs(current.x - predictedPos.x) + Math.abs(current.y - predictedPos.y);
+              const nearestDist = Math.abs(nearest.x - predictedPos.x) + Math.abs(nearest.y - predictedPos.y);
+              return currentDist < nearestDist ? current : nearest;
+            }, possibleMoves[0]);
+          } else {
+            // Simple or normal behavior
+            nextMove = possibleMoves.reduce((nearest, current) => {
+              const currentDist = Math.abs(current.x - pacman.x) + Math.abs(current.y - pacman.y);
+              const nearestDist = Math.abs(nearest.x - pacman.x) + Math.abs(nearest.y - pacman.y);
+              return currentDist < nearestDist ? current : nearest;
+            }, possibleMoves[0]);
+          }
       }
 
       return {
         ...ghost,
-        ...(possibleMoves[0] || ghost)
+        x: nextMove.x,
+        y: nextMove.y
       };
     }));
-  }, [maze, pacman.x, pacman.y, isPoweredUp]);
+  }, [maze, isGameOver, difficulty, ghostState, lastGhostUpdate]);
 
-  // Movement and game logic
+  // Use requestAnimationFrame for smooth ghost movement
+  useEffect(() => {
+    if (isGameOver) return;
+
+    let animationFrameId;
+    const updateGhosts = () => {
+      moveGhosts();
+      animationFrameId = requestAnimationFrame(updateGhosts);
+    };
+    
+    animationFrameId = requestAnimationFrame(updateGhosts);
+    
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [moveGhosts, isGameOver]);
+
+  // Update ghostState when power-up is collected
+  useEffect(() => {
+    setGhostState(isPoweredUp ? GHOST_STATES.FRIGHTENED : GHOST_STATES.CHASE);
+  }, [isPoweredUp]);
+
+  // Modify movePacman to remove ghost movement dependency
   const movePacman = useCallback((direction) => {
+    if (isGameOver) return;
+    
     setPacman(prev => {
       let newX = prev.x;
       let newY = prev.y;
@@ -253,7 +347,7 @@ const PacManGame = () => {
 
       return { x: newX, y: newY, direction };
     });
-  }, [maze, powerTimer]);
+  }, [isGameOver, maze, powerTimer]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
