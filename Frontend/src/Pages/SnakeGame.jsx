@@ -361,7 +361,7 @@ function SnakeGame() {
   };
 
   return (
-    <div className="min-h-screen px-2 sm:px-4 py-12 sm:py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
+    <div className="min-h-screen px-6 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center animate-fadeIn">
@@ -371,10 +371,10 @@ function SnakeGame() {
 
         {/* Enhanced Score Display */}
         <div className="mb-4 sm:mb-6 flex flex-wrap justify-center gap-2 sm:gap-4">
-          <span className="px-4 sm:px-6 py-1 sm:py-2 rounded-full bg-slate-800/70 text-yellow-200 font-bold text-sm sm:text-xl">
+          <span className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-yellow-200 font-bold text-sm sm:text-xl">
             Score: {score}
           </span>
-          <span className="px-4 sm:px-6 py-1 sm:py-2 rounded-full bg-slate-800/70 text-purple-400 font-bold text-sm sm:text-xl">
+          <span className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-purple-400 font-bold text-sm sm:text-xl">
             Speed: {Math.floor((INITIAL_SPEED - speed) / SPEED_INCREASE)}
           </span>
         </div>
@@ -425,7 +425,9 @@ function SnakeGame() {
           )}
         </div>
 
-        <LeaderboardButton gameLink="snake" />
+        <div className="py-7">
+          <LeaderboardButton gameLink="snake" />
+        </div>
       </div>
     </div>
   );

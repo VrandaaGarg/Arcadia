@@ -1,62 +1,83 @@
 const crypto = require("crypto");
-const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
-const sendEmail = require("../utils/sendEmail"); // ✅ Reusable email function
+const bcrypt = require("bcrypt");
 
-// ✅ Forgot Password (Generate Reset Token)
-const forgotPassword = async (req, res) => {
+exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
 
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate reset token (valid for 1 hour)
+    // Generate a secure reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
     user.resetToken = resetToken;
-    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour
+    user.resetTokenExpiry =
+      Date.now() + process.env.RESET_TOKEN_EXPIRY * 60 * 1000; // Expiry from .env
     await user.save();
 
-    // Send email
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
-    await sendEmail(
-      user.email,
-      "Password Reset Request",
-      `Click the following link to reset your password: ${resetURL}`
-    );
+    // Send reset email
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+    await sendResetEmail(user.email, resetLink);
 
-    res.json({ message: "Password reset email sent!" });
+    res.status(200).json({ message: "Password reset link sent to your email" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-// ✅ Reset Password (After clicking reset link)
-const resetPassword = async (req, res) => {
+// ✅ Helper function to send email
+async function sendResetEmail(email, resetLink) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Reset Your Password",
+    html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in ${process.env.RESET_TOKEN_EXPIRY} minutes.</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+exports.resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
-    const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() },
-    });
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: "Missing token or new password" });
+    }
 
-    if (!user) {
+    // Find the user by the reset token
+    const user = await User.findOne({ resetToken: token });
+    if (!user || user.resetTokenExpiry < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
+    // Set the new password (plain text, will be hashed by the schema's pre-save hook)
+    user.password = newPassword;
+
+    // Clear resetToken and resetTokenExpiry
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
+
+    // Save the user (password will be hashed automatically before saving)
     await user.save();
 
-    res.json({ message: "Password reset successful!" });
+    res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-module.exports = { forgotPassword, resetPassword };

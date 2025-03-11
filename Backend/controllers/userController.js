@@ -39,35 +39,34 @@ const registerUser = async (req, res) => {
 // ✅ Login User (Compare hashed password)
 const loginUser = async (req, res) => {
   try {
-    console.log("Login request received:", req.body);
-
     const { emailOrUsername, password } = req.body;
-
     if (!emailOrUsername || !password) {
       return res.status(400).json({ message: "Missing credentials" });
     }
 
+    // 🔹 Find user by email or username
     const user = await User.findOne({
       $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found!" });
+      return res.status(401).json({ message: "User not found!" });
     }
 
-    console.log("Stored hashed password:", user.password);
-    console.log("Entered password:", password);
-
-    // Ensure password is a string
+    // 🔹 Compare password (Ensure it's a string)
     const isMatch = await bcrypt.compare(password.toString(), user.password);
 
     if (!isMatch) {
       console.log("Password does not match");
-      return res.status(400).json({ message: "Incorrect password!" });
+      return res.status(401).json({ message: "Incorrect password!" });
     }
 
     console.log("Login successful!");
-    res.status(200).json({ message: "Login successful!", user });
+
+    // 🔹 Exclude password from response
+    const { password: _, ...userData } = user.toObject();
+
+    res.status(200).json({ message: "Login successful!", user: userData });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error", error: error.message });

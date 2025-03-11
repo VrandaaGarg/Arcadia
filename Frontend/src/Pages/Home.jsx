@@ -5,10 +5,11 @@ import API from "../api";
 function Home() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
   const [games, setGames] = useState([]);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setLoading(false), 1000);
   }, []);
 
   //fetch games from backend
@@ -17,7 +18,6 @@ function Home() {
       try {
         const response = await API.get("api/games"); // Adjust endpoint if needed
         setGames(response.data);
-        console.log("Games fetched:", response.data);
       } catch (error) {
         console.error("Error fetching games:", error);
       } finally {
