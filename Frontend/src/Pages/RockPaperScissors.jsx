@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaHandRock, FaHandPaper, FaHandScissors, FaRedo } from "react-icons/fa";
+import {
+  FaHandRock,
+  FaHandPaper,
+  FaHandScissors,
+  FaRedo,
+} from "react-icons/fa";
 
 const choices = [
   { name: "Rock", icon: FaHandRock },
@@ -51,11 +56,11 @@ function RockPaperScissors() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white relative">
+    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white relative">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-5xl font-black mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"
@@ -64,29 +69,30 @@ function RockPaperScissors() {
         </motion.h1>
 
         {/* Score Display */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="flex gap-6 mb-12"
         >
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-cyan-500/20 px-8 py-4 rounded-xl text-center">
-            <p className="text-gray-400 mb-1">You</p>
-            <p className="text-3xl font-bold text-cyan-400">{playerScore}</p>
-          </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/20 px-8 py-4 rounded-xl text-center">
-            <p className="text-gray-400 mb-1">Computer</p>
-            <p className="text-3xl font-bold text-purple-400">{computerScore}</p>
+          <div className="mb-4 sm:mb-6 flex flex-wrap justify-center gap-2 sm:gap-4">
+            <p className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-purple-400 font-bold text-sm sm:text-xl">
+              You {playerScore}
+            </p>
+            <p className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-yellow-200 font-bold text-sm sm:text-xl">
+              CPU {computerScore}
+            </p>
           </div>
         </motion.div>
 
         {/* Game Results */}
         {result && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8 text-center"
           >
-            <p className="text-3xl font-bold mb-4 
+            <p
+              className="text-3xl font-bold mb-4 
               ${result.includes('Win') ? 'text-cyan-400' : 
                 result.includes('Draw') ? 'text-yellow-400' : 'text-red-400'}"
             >
@@ -122,7 +128,7 @@ function RockPaperScissors() {
                 <Icon className="text-3xl md:text-4xl text-cyan-400" />
                 <span className="font-medium">{choice.name}</span>
               </motion.button>
-            )
+            );
           })}
         </div>
 

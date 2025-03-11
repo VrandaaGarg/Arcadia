@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const sudokuPuzzles = [
   [
@@ -25,32 +25,76 @@ const sudokuPuzzles = [
     ["", 6, "", 3, "", 7, "", 2, ""],
   ],
   [
-    [7, "", "", "", "", "", "", "", 9],
+    [7, "", "", "", "", 4, "", "", 9],
     ["", "", "", 6, "", 8, "", "", ""],
-    ["", "", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", "", ""],
-    ["", "", "", "", 3, "", "", "", ""],
-    ["", "", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", "", ""],
-    [2, "", "", "", "", "", "", "", 5],
+    ["", "", 9, "", "", "", "", "", 2],
+    ["", "", "", "", 5, "", "", 2, ""],
+    ["", 6, "", "", 3, "", "", 8, ""],
+    ["", 8, "", "", "", "", "", "", ""],
+    ["", "", "", "", "", "", 5, "", ""],
+    ["", "", "", 4, "", 9, "", "", ""],
+    [2, "", "", "", 8, "", "", "", 5],
+  ],
+];
+
+const solutionBoard = [
+  [
+    [5, 3, 4, 6, 7, 8, 9, 1, 2],
+    [6, 7, 2, 1, 9, 5, 3, 4, 8],
+    [1, 9, 8, 3, 4, 2, 5, 6, 7],
+    [8, 5, 9, 7, 6, 1, 4, 2, 3],
+    [4, 2, 6, 8, 5, 3, 7, 9, 1],
+    [7, 1, 3, 9, 2, 4, 8, 5, 6],
+    [9, 6, 1, 5, 3, 7, 2, 8, 4],
+    [2, 8, 7, 4, 1, 9, 6, 3, 5],
+    [3, 4, 5, 2, 8, 6, 1, 7, 9],
+  ],
+  [
+    [9, 2, 8, 4, 6, 5, 3, 7, 1],
+    [1, 7, 5, 9, 2, 3, 8, 4, 6],
+    [6, 3, 4, 7, 8, 1, 2, 9, 5],
+    [5, 4, 9, 6, 7, 8, 1, 3, 2],
+    [3, 8, 2, 1, 4, 6, 7, 5, 9],
+    [8, 1, 7, 5, 9, 2, 6, 1, 4],
+    [7, 1, 6, 2, 5, 4, 9, 3, 8],
+    [9, 5, 8, 1, 3, 6, 4, 2, 7],
+    [4, 6, 3, 3, 1, 7, 5, 2, 9],
+  ],
+  [
+    [7, 1, 3, 5, 2, 4, 6, 8, 9],
+    [5, 9, 2, 6, 7, 8, 3, 4, 1],
+    [8, 6, 9, 1, 4, 3, 7, 5, 2],
+    [3, 4, 6, 8, 5, 7, 9, 2, 1],
+    [9, 6, 1, 2, 3, 5, 4, 8, 7],
+    [2, 8, 7, 9, 1, 6, 5, 3, 4],
+    [4, 3, 8, 7, 9, 2, 5, 1, 6],
+    [1, 5, 2, 4, 6, 9, 8, 7, 3],
+    [2, 7, 5, 3, 8, 1, 9, 6, 5],
   ],
 ];
 
 function Sudoku() {
   const [selectedPuzzle, setSelectedPuzzle] = useState(0);
   const [board, setBoard] = useState([...sudokuPuzzles[selectedPuzzle]]);
+  const [solved, setSolved] = useState(false);
 
   const handleChange = (row, col, value) => {
-    if (value >= 1 && value <= 9) {
+    if (value === "" || /^[1-9]$/.test(value)) {
       const newBoard = board.map((r, rIdx) =>
-        r.map((c, cIdx) => (rIdx === row && cIdx === col ? Number(value) : c))
+        r.map((c, cIdx) =>
+          rIdx === row && cIdx === col ? (value === "" ? "" : Number(value)) : c
+        )
       );
       setBoard(newBoard);
     }
   };
 
+  const isFilled = (board) => {
+    return board.every((row) => row.every((cell) => cell !== ""));
+  };
+
   const checkWin = () => {
+    // Check rows and columns
     for (let i = 0; i < 9; i++) {
       let rowSet = new Set();
       let colSet = new Set();
@@ -61,12 +105,33 @@ function Sudoku() {
       }
       if (rowSet.size !== 9 || colSet.size !== 9) return false;
     }
+
+    // Check 3x3 subgrids
+    for (let boxRow = 0; boxRow < 3; boxRow++) {
+      for (let boxCol = 0; boxCol < 3; boxCol++) {
+        let gridSet = new Set();
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 3; col++) {
+            let num = board[boxRow * 3 + row][boxCol * 3 + col];
+            if (gridSet.has(num)) return false;
+            gridSet.add(num);
+          }
+        }
+      }
+    }
+
+    setSolved(true);
     return true;
   };
 
   const handlePuzzleChange = (index) => {
     setSelectedPuzzle(index);
     setBoard([...sudokuPuzzles[index]]);
+  };
+
+  const checkSolution = () => {
+    setBoard([...solutionBoard[selectedPuzzle]]);
+    setSolved(true);
   };
 
   return (
@@ -92,13 +157,6 @@ function Sudoku() {
               </option>
             ))}
           </select>
-
-          <NavLink
-            to="/leaderboard"
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-          >
-            🏆 Leaderboard
-          </NavLink>
         </div>
 
         {/* Sudoku Grid */}
@@ -110,13 +168,21 @@ function Sudoku() {
                 type="text"
                 maxLength="1"
                 value={cell}
-                onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-                disabled={sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== ""}
-                className={`w-8 h-8 sm:w-12 sm:h-12 text-center text-lg sm:text-xl font-medium
-                  ${(rowIndex + 1) % 3 === 0 && 'border-b-2 border-cyan-500/30'}
-                  ${(colIndex + 1) % 3 === 0 && 'border-r-2 border-cyan-500/30'}
-                  ${cell ? 'text-cyan-400' : 'text-gray-400'}
-                  ${sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== "" ? 'bg-slate-700/50' : 'bg-slate-800/30'}
+                onChange={(e) =>
+                  handleChange(rowIndex, colIndex, e.target.value)
+                }
+                disabled={
+                  sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== ""
+                }
+                className={`w-6 h-6 sm:w-12 sm:h-12 text-center text-lg sm:text-xl font-medium
+                  ${(rowIndex + 1) % 3 === 0 && "border-b-2 border-cyan-500/30"}
+                  ${(colIndex + 1) % 3 === 0 && "border-r-2 border-cyan-500/30"}
+                  ${cell ? "text-cyan-400" : "text-gray-400"}
+                  ${
+                    sudokuPuzzles[selectedPuzzle][rowIndex][colIndex] !== ""
+                      ? "bg-slate-700/50"
+                      : "bg-slate-800/30"
+                  }
                   focus:outline-none focus:bg-slate-700/70 transition-colors duration-200
                   hover:bg-slate-700/50`}
               />
@@ -126,18 +192,50 @@ function Sudoku() {
 
         {/* Control Buttons */}
         <div className="flex flex-wrap justify-center gap-4 mt-8">
-          <button
-            onClick={() => alert(checkWin() ? "🎉 Congratulations! You solved it!" : "Keep trying! You're doing great!")}
-            className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          <motion.button
+            className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+           rounded-xl transition-all duration-300 transform hover:scale-105 
+           hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] font-medium"
+            onClick={() => {
+              const isFilled = board.every((row) =>
+                row.every((cell) => cell !== "")
+              ); // Check if all boxes are filled
+
+              if (checkWin()) {
+                alert("🎉 Congratulations! You solved it!");
+              } else {
+                if (!isFilled) {
+                  const showSolution = window.confirm(
+                    "Fill all the boxes to check your solution. Do you want to see the correct answer?"
+                  );
+                  if (showSolution) {
+                    checkSolution();
+                  }
+                } else {
+                  const showSolution = window.confirm(
+                    "❌ Your solution is incorrect. Do you want to see the correct answer?"
+                  );
+                  if (showSolution) {
+                    checkSolution();
+                  }
+                }
+              }
+            }}
           >
             Check Solution
-          </button>
-          <button
-            onClick={() => setBoard([...sudokuPuzzles[selectedPuzzle]])}
-            className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-xl transition-all duration-300 transform hover:scale-105"
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              setBoard([...sudokuPuzzles[selectedPuzzle]]);
+              setSolved(false);
+            }}
+            className="px-6 py-3 bg-gray-800/50 backdrop-blur-sm border border-red-500/20 
+              hover:border-red-500/40 rounded-xl transition-all duration-300 text-red-400 hover:text-red-300"
           >
             Reset Board
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>

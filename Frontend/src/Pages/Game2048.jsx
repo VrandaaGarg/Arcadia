@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaArrowDown,
+  FaArrowLeft,
+  FaArrowRight,
+} from "react-icons/fa";
 import API from "../api";
 import LeaderboardButton from "../Components/LeaderboardButton.jsx";
 
@@ -74,6 +79,7 @@ const Game2048 = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log("Stored User:", storedUser);
 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -177,61 +183,85 @@ const Game2048 = () => {
 
   const getTileColor = (num) => {
     const colors = {
-      2: 'bg-gradient-to-br from-blue-200 to-blue-300',
-      4: 'bg-gradient-to-br from-green-200 to-green-300',
-      8: 'bg-gradient-to-br from-yellow-200 to-yellow-300',
-      16: 'bg-gradient-to-br from-orange-200 to-orange-300',
-      32: 'bg-gradient-to-br from-red-200 to-red-300',
-      64: 'bg-gradient-to-br from-pink-200 to-pink-300',
-      128: 'bg-gradient-to-br from-purple-200 to-purple-300',
-      256: 'bg-gradient-to-br from-indigo-200 to-indigo-300',
-      512: 'bg-gradient-to-br from-cyan-200 to-cyan-300',
-      1024: 'bg-gradient-to-br from-emerald-200 to-emerald-300',
-      2048: 'bg-gradient-to-br from-yellow-200 to-red-300',
+      2: "bg-gradient-to-br from-blue-200 to-blue-300",
+      4: "bg-gradient-to-br from-green-200 to-green-300",
+      8: "bg-gradient-to-br from-yellow-200 to-yellow-300",
+      16: "bg-gradient-to-br from-orange-200 to-orange-300",
+      32: "bg-gradient-to-br from-red-200 to-red-300",
+      64: "bg-gradient-to-br from-pink-200 to-pink-300",
+      128: "bg-gradient-to-br from-purple-200 to-purple-300",
+      256: "bg-gradient-to-br from-indigo-200 to-indigo-300",
+      512: "bg-gradient-to-br from-cyan-200 to-cyan-300",
+      1024: "bg-gradient-to-br from-emerald-200 to-emerald-300",
+      2048: "bg-gradient-to-br from-yellow-200 to-red-300",
     };
-    return colors[num] || 'bg-gray-700/50';
+    return colors[num] || "bg-gray-700/50";
   };
 
   return (
-    <div className="min-h-screen px-4 py-16 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
+    <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white">
       <div className="w-full max-w-2xl flex flex-col items-center">
-        <h1 className="text-3xl sm:text-4xl font-black mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
           2048 Game
         </h1>
 
         {/* Controls Section */}
         <div className="flex flex-wrap justify-center gap-4 mb-6">
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-4 sm:px-6 py-2 sm:py-3 rounded-xl">
-            <p className="text-xl sm:text-2xl font-bold">Score: {score}</p>
+          <div className="flex gap-2">
+            <p className="px-4 sm:px-6 py-2 rounded-xl  bg-slate-800/70 text-purple-400 font-bold text-lg sm:text-xl">
+              Score : {score}
+            </p>
+
+            {/* Submit Score Button */}
+            <button
+              onClick={() => {
+                submitScore(score);
+                setScore(0);
+                resetGame();
+              }}
+              className=" px-6 py-2  bg-purple-600/30 hover:bg-purple-600/50 
+            border border-purple-500/30 rounded-xl transition-all duration-300
+            text-lg font-semibold hover:shadow-lg hover:shadow-purple-500/20"
+            >
+              Submit Score
+            </button>
           </div>
-          <button
-            onClick={resetGame}
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
-              px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-xl font-bold transition-all duration-300 
-              hover:shadow-lg hover:shadow-cyan-500/20"
-          >
-            New Game
-          </button>
-          <LeaderboardButton gameLink="2048" />
         </div>
 
         {/* Game Board */}
         <div className="bg-[#082B4C]/80 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-xl border border-blue-500/20">
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 aspect-square w-[280px] sm:w-[400px] md:w-[440px]">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 aspect-square w-[280px] sm:w-[330px] ">
             {board.flat().map((num, index) => (
               <div
                 key={index}
                 className={`w-full aspect-square rounded-lg flex items-center justify-center 
-                  ${getTileColor(num)} shadow-inner transition-colors duration-200`}
+                  ${getTileColor(
+                    num
+                  )} shadow-inner transition-colors duration-200`}
               >
-                <span className={`font-bold ${num >= 100 ? 'text-2xl' : 'text-3xl'} text-gray-800`}>
-                  {num !== 0 ? num : ''}
+                <span
+                  className={`font-bold ${
+                    num >= 100 ? "text-2xl" : "text-3xl"
+                  } text-gray-800`}
+                >
+                  {num !== 0 ? num : ""}
                 </span>
               </div>
             ))}
           </div>
         </div>
 
+        <div className="flex gap-5 my-7">
+          <button
+            onClick={resetGame}
+            className="px-6 py-3 bg-gradient-to-r text-white font-semibold from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+            rounded-xl transition-all duration-300 flex items-center gap-2"
+          >
+            {" "}
+            New Game
+          </button>
+          <LeaderboardButton gameLink="2048" />
+        </div>
         {/* Mobile Arrow Controls */}
         <div className="md:hidden mt-8 flex flex-col items-center gap-2">
           <button
@@ -269,27 +299,24 @@ const Game2048 = () => {
             </button>
           </div>
         </div>
-
         {/* Desktop Instructions */}
-        <div className="mt-8 hidden md:block text-center text-gray-400">
+        <div className="mt-5 hidden md:block text-center text-gray-400">
           <p className="mb-3 text-lg">Use arrow keys to move tiles</p>
           <div className="flex justify-center gap-3">
-            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↑</kbd>
-            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">↓</kbd>
-            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">←</kbd>
-            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">→</kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">
+              ↑
+            </kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">
+              ↓
+            </kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">
+              ←
+            </kbd>
+            <kbd className="px-3 py-1.5 bg-gray-700/50 rounded-lg border border-gray-600">
+              →
+            </kbd>
           </div>
         </div>
-
-        {/* Submit Score Button */}
-        <button
-          onClick={() => submitScore(score)}
-          className="mt-8 px-6 py-3 bg-purple-600/30 hover:bg-purple-600/50 
-            border border-purple-500/30 rounded-xl transition-all duration-300
-            text-lg font-semibold hover:shadow-lg hover:shadow-purple-500/20"
-        >
-          Submit Score
-        </button>
       </div>
     </div>
   );
