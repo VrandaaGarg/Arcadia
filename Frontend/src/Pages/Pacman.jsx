@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { FaGhost, FaArrowUp, FaArrowDown, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {
+  FaGhost,
+  FaArrowUp,
+  FaArrowDown,
+  FaArrowLeft,
+  FaArrowRight,
+} from "react-icons/fa";
 import { BsFillCircleFill } from "react-icons/bs";
 import LeaderboardButton from "../Components/LeaderboardButton";
 import API from "../api";
@@ -9,80 +15,80 @@ const MAZE_LAYOUTS = [
   {
     name: "Classic",
     pattern: [
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-      [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1],
-      [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-      [1,1,1,1,1,0,1,0,1,1,1,1,1,0,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-      [1,0,1,1,1,0,1,0,1,1,1,0,1,0,1],
-      [1,0,0,0,1,0,1,0,0,0,0,0,0,0,1],
-      [1,0,1,0,1,0,1,0,1,1,1,1,1,0,1],
-      [1,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ]
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+      [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
   },
   {
     name: "Maze Runner",
     pattern: [
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-      [1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
-      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-      [1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
-      [1,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
-      [1,0,0,0,1,0,1,1,1,0,1,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],
-      [1,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],
-      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-      [1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
-      [1,0,1,0,0,0,0,0,0,0,0,0,1,0,1],
-      [1,0,0,0,1,1,1,1,1,1,1,0,0,0,1],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ]
-  }
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+      [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+      [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+      [1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+      [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+      [1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+  },
 ];
 
 const DIFFICULTY_SETTINGS = {
-  easy: { 
-    ghostSpeed: 800, 
-    powerUpDuration: 15000, 
+  easy: {
+    ghostSpeed: 800,
+    powerUpDuration: 15000,
     ghostCount: 2,
-    ghostBehavior: 'simple'  // Ghosts move more predictably
+    ghostBehavior: "simple", // Ghosts move more predictably
   },
-  medium: { 
-    ghostSpeed: 500, 
-    powerUpDuration: 10000, 
+  medium: {
+    ghostSpeed: 500,
+    powerUpDuration: 10000,
     ghostCount: 3,
-    ghostBehavior: 'normal'  // Standard ghost behavior
+    ghostBehavior: "normal", // Standard ghost behavior
   },
-  hard: { 
-    ghostSpeed: 300, 
-    powerUpDuration: 7000, 
+  hard: {
+    ghostSpeed: 300,
+    powerUpDuration: 7000,
     ghostCount: 4,
-    ghostBehavior: 'aggressive'  // Ghosts move more strategically
-  }
+    ghostBehavior: "aggressive", // Ghosts move more strategically
+  },
 };
 
 // Add this new constant for ghost state management
 const GHOST_STATES = {
-  CHASE: 'chase',
-  SCATTER: 'scatter',
-  FRIGHTENED: 'frightened'
+  CHASE: "chase",
+  SCATTER: "scatter",
+  FRIGHTENED: "frightened",
 };
 
 const PacManGame = () => {
   const [user, setUser] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [scoreToSubmit, setScoreToSubmit] = useState(null);
-  const [difficulty, setDifficulty] = useState('medium');
+  const [difficulty, setDifficulty] = useState("medium");
   const [currentLayout, setCurrentLayout] = useState(0);
-  const [powerUpType, setPowerUpType] = useState('normal');
+  const [powerUpType, setPowerUpType] = useState("normal");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -126,11 +132,11 @@ const PacManGame = () => {
   const GHOST_SPEED = 400; // Milliseconds between ghost moves
   const POWER_UP_DURATION = 10000; // 10 seconds power-up
 
-  const [pacman, setPacman] = useState({ x: 1, y: 1, direction: 'right' });
+  const [pacman, setPacman] = useState({ x: 1, y: 1, direction: "right" });
   const [ghosts, setGhosts] = useState([
-    { x: 13, y: 1, color: 'red' },
-    { x: 13, y: 13, color: 'pink' },
-    { x: 1, y: 13, color: 'cyan' },
+    { x: 13, y: 1, color: "red" },
+    { x: 13, y: 13, color: "pink" },
+    { x: 1, y: 13, color: "cyan" },
   ]);
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -145,11 +151,11 @@ const PacManGame = () => {
   const handleLayoutChange = (newLayout) => {
     setCurrentLayout(newLayout);
     // Reset game state with new layout
-    setPacman({ x: 1, y: 1, direction: 'right' });
+    setPacman({ x: 1, y: 1, direction: "right" });
     setGhosts([
-      { x: 13, y: 1, color: 'red' },
-      { x: 13, y: 13, color: 'pink' },
-      { x: 1, y: 13, color: 'cyan' },
+      { x: 13, y: 1, color: "red" },
+      { x: 13, y: 13, color: "pink" },
+      { x: 1, y: 13, color: "cyan" },
     ]);
     setScore(0);
     setIsGameOver(false);
@@ -162,12 +168,14 @@ const PacManGame = () => {
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty);
     // Reset game state
-    setPacman({ x: 1, y: 1, direction: 'right' });
-    setGhosts([
-      { x: 13, y: 1, color: 'red' },
-      { x: 13, y: 13, color: 'pink' },
-      { x: 1, y: 13, color: 'cyan' },
-    ].slice(0, DIFFICULTY_SETTINGS[newDifficulty].ghostCount));
+    setPacman({ x: 1, y: 1, direction: "right" });
+    setGhosts(
+      [
+        { x: 13, y: 1, color: "red" },
+        { x: 13, y: 13, color: "pink" },
+        { x: 1, y: 13, color: "cyan" },
+      ].slice(0, DIFFICULTY_SETTINGS[newDifficulty].ghostCount)
+    );
     setScore(0);
     setIsGameOver(false);
     setIsPoweredUp(false);
@@ -176,106 +184,138 @@ const PacManGame = () => {
   };
 
   // Modify createMaze to accept layout parameter
-  const createMaze = useCallback((layoutIndex = currentLayout) => {
-    const mazeTemplate = MAZE_LAYOUTS[layoutIndex].pattern;
-    const maze = mazeTemplate.map(row => 
-      row.map(cell => ({
-        isWall: cell === 1,
-        hasDot: cell === 0,
-        hasPowerUp: false
-      }))
-    );
+  const createMaze = useCallback(
+    (layoutIndex = currentLayout) => {
+      const mazeTemplate = MAZE_LAYOUTS[layoutIndex].pattern;
+      const maze = mazeTemplate.map((row) =>
+        row.map((cell) => ({
+          isWall: cell === 1,
+          hasDot: cell === 0,
+          hasPowerUp: false,
+        }))
+      );
 
-    // Add power-ups strategically
-    const powerUpPositions = [
-      {x: 1, y: 1}, {x: 1, y: GRID_SIZE-2},
-      {x: GRID_SIZE-2, y: 1}, {x: GRID_SIZE-2, y: GRID_SIZE-2}
-    ];
+      // Add power-ups strategically
+      const powerUpPositions = [
+        { x: 1, y: 1 },
+        { x: 1, y: GRID_SIZE - 2 },
+        { x: GRID_SIZE - 2, y: 1 },
+        { x: GRID_SIZE - 2, y: GRID_SIZE - 2 },
+      ];
 
-    powerUpPositions.forEach(pos => {
-      if (!maze[pos.x]?.[pos.y] && !maze[pos.x][pos.y].isWall) {
-        maze[pos.x][pos.y].hasPowerUp = true;
-        maze[pos.x][pos.y].hasDot = false;
-      }
-    });
+      powerUpPositions.forEach((pos) => {
+        if (!maze[pos.x]?.[pos.y] && !maze[pos.x][pos.y].isWall) {
+          maze[pos.x][pos.y].hasPowerUp = true;
+          maze[pos.x][pos.y].hasDot = false;
+        }
+      });
 
-    return maze;
-  }, [currentLayout]);
+      return maze;
+    },
+    [currentLayout]
+  );
 
   const [maze, setMaze] = useState(createMaze);
 
   // Optimize moveGhosts to be independent of pacman movement
   const moveGhosts = useCallback(() => {
     if (isGameOver) return;
-    
+
     const currentTime = Date.now();
     const timeSinceLastUpdate = currentTime - lastGhostUpdate;
-    
-    if (timeSinceLastUpdate < DIFFICULTY_SETTINGS[difficulty].ghostSpeed) return;
-    
+
+    if (timeSinceLastUpdate < DIFFICULTY_SETTINGS[difficulty].ghostSpeed)
+      return;
+
     setLastGhostUpdate(currentTime);
-    
-    setGhosts(prevGhosts => prevGhosts.map(ghost => {
-      const possibleMoves = [
-        { x: ghost.x + 1, y: ghost.y },
-        { x: ghost.x - 1, y: ghost.y },
-        { x: ghost.x, y: ghost.y + 1 },
-        { x: ghost.x, y: ghost.y - 1 }
-      ].filter(move => {
-        if (!maze[move.x] || !maze[move.y]) return false;
-        return !maze[move.x][move.y].isWall;
-      });
 
-      if (possibleMoves.length === 0) return ghost;
+    setGhosts((prevGhosts) =>
+      prevGhosts.map((ghost) => {
+        const possibleMoves = [
+          { x: ghost.x + 1, y: ghost.y },
+          { x: ghost.x - 1, y: ghost.y },
+          { x: ghost.x, y: ghost.y + 1 },
+          { x: ghost.x, y: ghost.y - 1 },
+        ].filter((move) => {
+          if (!maze[move.x] || !maze[move.y]) return false;
+          return !maze[move.x][move.y].isWall;
+        });
 
-      let nextMove;
-      
-      switch (ghostState) {
-        case GHOST_STATES.FRIGHTENED:
-          // Run away from Pacman
-          nextMove = possibleMoves.reduce((farthest, current) => {
-            const currentDist = Math.abs(current.x - pacman.x) + Math.abs(current.y - pacman.y);
-            const farthestDist = Math.abs(farthest.x - pacman.x) + Math.abs(farthest.y - pacman.y);
-            return currentDist > farthestDist ? current : farthest;
-          }, possibleMoves[0]);
-          break;
+        if (possibleMoves.length === 0) return ghost;
 
-        case GHOST_STATES.SCATTER:
-          // Move randomly
-          nextMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-          break;
+        let nextMove;
 
-        default: // CHASE
-          // Use difficulty-based behavior
-          const behavior = DIFFICULTY_SETTINGS[difficulty].ghostBehavior;
-          
-          if (behavior === 'aggressive') {
-            // Predict Pacman's next position
-            const predictedPos = {
-              x: pacman.x + (pacman.direction === 'up' ? -1 : pacman.direction === 'down' ? 1 : 0),
-              y: pacman.y + (pacman.direction === 'left' ? -1 : pacman.direction === 'right' ? 1 : 0)
-            };
-            nextMove = possibleMoves.reduce((nearest, current) => {
-              const currentDist = Math.abs(current.x - predictedPos.x) + Math.abs(current.y - predictedPos.y);
-              const nearestDist = Math.abs(nearest.x - predictedPos.x) + Math.abs(nearest.y - predictedPos.y);
-              return currentDist < nearestDist ? current : nearest;
+        switch (ghostState) {
+          case GHOST_STATES.FRIGHTENED:
+            // Run away from Pacman
+            nextMove = possibleMoves.reduce((farthest, current) => {
+              const currentDist =
+                Math.abs(current.x - pacman.x) + Math.abs(current.y - pacman.y);
+              const farthestDist =
+                Math.abs(farthest.x - pacman.x) +
+                Math.abs(farthest.y - pacman.y);
+              return currentDist > farthestDist ? current : farthest;
             }, possibleMoves[0]);
-          } else {
-            // Simple or normal behavior
-            nextMove = possibleMoves.reduce((nearest, current) => {
-              const currentDist = Math.abs(current.x - pacman.x) + Math.abs(current.y - pacman.y);
-              const nearestDist = Math.abs(nearest.x - pacman.x) + Math.abs(nearest.y - pacman.y);
-              return currentDist < nearestDist ? current : nearest;
-            }, possibleMoves[0]);
-          }
-      }
+            break;
 
-      return {
-        ...ghost,
-        x: nextMove.x,
-        y: nextMove.y
-      };
-    }));
+          case GHOST_STATES.SCATTER:
+            // Move randomly
+            nextMove =
+              possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+            break;
+
+          default: // CHASE
+            // Use difficulty-based behavior
+            const behavior = DIFFICULTY_SETTINGS[difficulty].ghostBehavior;
+
+            if (behavior === "aggressive") {
+              // Predict Pacman's next position
+              const predictedPos = {
+                x:
+                  pacman.x +
+                  (pacman.direction === "up"
+                    ? -1
+                    : pacman.direction === "down"
+                    ? 1
+                    : 0),
+                y:
+                  pacman.y +
+                  (pacman.direction === "left"
+                    ? -1
+                    : pacman.direction === "right"
+                    ? 1
+                    : 0),
+              };
+              nextMove = possibleMoves.reduce((nearest, current) => {
+                const currentDist =
+                  Math.abs(current.x - predictedPos.x) +
+                  Math.abs(current.y - predictedPos.y);
+                const nearestDist =
+                  Math.abs(nearest.x - predictedPos.x) +
+                  Math.abs(nearest.y - predictedPos.y);
+                return currentDist < nearestDist ? current : nearest;
+              }, possibleMoves[0]);
+            } else {
+              // Simple or normal behavior
+              nextMove = possibleMoves.reduce((nearest, current) => {
+                const currentDist =
+                  Math.abs(current.x - pacman.x) +
+                  Math.abs(current.y - pacman.y);
+                const nearestDist =
+                  Math.abs(nearest.x - pacman.x) +
+                  Math.abs(nearest.y - pacman.y);
+                return currentDist < nearestDist ? current : nearest;
+              }, possibleMoves[0]);
+            }
+        }
+
+        return {
+          ...ghost,
+          x: nextMove.x,
+          y: nextMove.y,
+        };
+      })
+    );
   }, [maze, isGameOver, difficulty, ghostState, lastGhostUpdate]);
 
   // Use requestAnimationFrame for smooth ghost movement
@@ -287,9 +327,9 @@ const PacManGame = () => {
       moveGhosts();
       animationFrameId = requestAnimationFrame(updateGhosts);
     };
-    
+
     animationFrameId = requestAnimationFrame(updateGhosts);
-    
+
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
@@ -301,53 +341,68 @@ const PacManGame = () => {
   }, [isPoweredUp]);
 
   // Modify movePacman to remove ghost movement dependency
-  const movePacman = useCallback((direction) => {
-    if (isGameOver) return;
-    
-    setPacman(prev => {
-      let newX = prev.x;
-      let newY = prev.y;
+  const movePacman = useCallback(
+    (direction) => {
+      if (isGameOver) return;
 
-      switch (direction) {
-        case 'up': newX--; break;
-        case 'down': newX++; break;
-        case 'left': newY--; break;
-        case 'right': newY++; break;
-        default: break;
-      }
+      setPacman((prev) => {
+        let newX = prev.x;
+        let newY = prev.y;
 
-      // Check wall collision
-      if (maze[newX]?.[newY]?.isWall) {
-        return { ...prev, direction };
-      }
+        switch (direction) {
+          case "up":
+            newX--;
+            break;
+          case "down":
+            newX++;
+            break;
+          case "left":
+            newY--;
+            break;
+          case "right":
+            newY++;
+            break;
+          default:
+            break;
+        }
 
-      // Check dot collection
-      if (maze[newX][newY].hasDot) {
-        setScore(s => s + 10);
-        setMaze(prev => {
-          const newMaze = [...prev];
-          newMaze[newX][newY].hasDot = false;
-          return newMaze;
-        });
-      }
+        // Check wall collision
+        if (maze[newX]?.[newY]?.isWall) {
+          return { ...prev, direction };
+        }
 
-      // Check power-up collection
-      if (maze[newX][newY].hasPowerUp) {
-        setIsPoweredUp(true);
-        setMaze(prev => {
-          const newMaze = [...prev];
-          newMaze[newX][newY].hasPowerUp = false;
-          return newMaze;
-        });
-        
-        if (powerTimer) clearTimeout(powerTimer);
-        const timer = setTimeout(() => setIsPoweredUp(false), POWER_UP_DURATION);
-        setPowerTimer(timer);
-      }
+        // Check dot collection
+        if (maze[newX][newY].hasDot) {
+          setScore((s) => s + 10);
+          setMaze((prev) => {
+            const newMaze = [...prev];
+            newMaze[newX][newY].hasDot = false;
+            return newMaze;
+          });
+        }
 
-      return { x: newX, y: newY, direction };
-    });
-  }, [isGameOver, maze, powerTimer]);
+        // Check power-up collection
+        if (maze[newX][newY].hasPowerUp) {
+          setIsPoweredUp(true);
+          setMaze((prev) => {
+            const newMaze = [...prev];
+            newMaze[newX][newY].hasPowerUp = false;
+            return newMaze;
+          });
+
+          if (powerTimer) clearTimeout(powerTimer);
+          const timer = setTimeout(
+            () => setIsPoweredUp(false),
+            POWER_UP_DURATION
+          );
+          setPowerTimer(timer);
+        }
+
+        return { x: newX, y: newY, direction };
+      });
+    },
+    [isGameOver, maze, powerTimer]
+  );
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -378,13 +433,13 @@ const PacManGame = () => {
   // Collision detection
   useEffect(() => {
     const checkCollision = () => {
-      const collision = ghosts.some(ghost => 
-        ghost.x === pacman.x && ghost.y === pacman.y
+      const collision = ghosts.some(
+        (ghost) => ghost.x === pacman.x && ghost.y === pacman.y
       );
 
       if (collision) {
         if (isPoweredUp) {
-          setScore(prevScore => prevScore + 200);
+          setScore((prevScore) => prevScore + 200);
         } else {
           setIsGameOver(true);
           // Submit score immediately when game is over
@@ -399,7 +454,10 @@ const PacManGame = () => {
   // Ghost movement interval
   useEffect(() => {
     if (!isGameOver) {
-      const interval = setInterval(moveGhosts, DIFFICULTY_SETTINGS[difficulty].ghostSpeed);
+      const interval = setInterval(
+        moveGhosts,
+        DIFFICULTY_SETTINGS[difficulty].ghostSpeed
+      );
       return () => clearInterval(interval);
     }
   }, [moveGhosts, isGameOver, difficulty]);
@@ -419,7 +477,7 @@ const PacManGame = () => {
       const response = await API.post(`/api/games/${gameId}/scores`, {
         userId: user._id,
         score: finalScore,
-        gameId: gameId
+        gameId: gameId,
       });
       console.log("Score submitted successfully:", response.data);
     } catch (error) {
@@ -433,12 +491,14 @@ const PacManGame = () => {
   };
 
   const restartGame = useCallback(() => {
-    setPacman({ x: 1, y: 1, direction: 'right' });
-    setGhosts([
-      { x: 13, y: 1, color: 'red' },
-      { x: 13, y: 13, color: 'pink' },
-      { x: 1, y: 13, color: 'cyan' },
-    ].slice(0, DIFFICULTY_SETTINGS[difficulty].ghostCount));
+    setPacman({ x: 1, y: 1, direction: "right" });
+    setGhosts(
+      [
+        { x: 13, y: 1, color: "red" },
+        { x: 13, y: 13, color: "pink" },
+        { x: 1, y: 13, color: "cyan" },
+      ].slice(0, DIFFICULTY_SETTINGS[difficulty].ghostCount)
+    );
     setScore(0);
     setIsGameOver(false);
     setIsPoweredUp(false);
@@ -448,13 +508,13 @@ const PacManGame = () => {
 
   const renderCell = (x, y) => {
     const isPacman = pacman.x === x && pacman.y === y;
-    const ghost = ghosts.find(g => g.x === x && g.y === y);
+    const ghost = ghosts.find((g) => g.x === x && g.y === y);
     const cell = maze[x][y];
 
     if (isPacman) {
       return (
         <motion.div
-          animate={{ rotate: pacman.direction === 'left' ? 180 : 0 }}
+          animate={{ rotate: pacman.direction === "left" ? 180 : 0 }}
           className="w-full h-full flex items-center justify-center"
         >
           <div className="w-3/4 h-3/4 bg-yellow-400 rounded-full" />
@@ -464,9 +524,11 @@ const PacManGame = () => {
 
     if (ghost) {
       return (
-        <FaGhost 
-          className={`text-${ghost.color}-500 ${isPoweredUp ? 'opacity-50' : ''}`} 
-          size={20} 
+        <FaGhost
+          className={`text-${ghost.color}-500 ${
+            isPoweredUp ? "opacity-50" : ""
+          }`}
+          size={20}
         />
       );
     }
@@ -527,8 +589,24 @@ const PacManGame = () => {
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center mt-10"
       >
-        <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-          Pac-Man
+        <h1 className="text-4xl md:text-5xl font-black mb-8 text-center ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            Pac-Man
+          </motion.span>
         </h1>
 
         {renderGameSettings()}
@@ -542,7 +620,7 @@ const PacManGame = () => {
         </div>
 
         {/* Game Board */}
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
           className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl border border-cyan-500/20"

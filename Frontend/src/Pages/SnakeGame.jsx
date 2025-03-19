@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import API from "../api";
 import LeaderboardButton from "../Components/LeaderboardButton";
+import { motion } from "framer-motion";
 
 const GRID_SIZE = 20;
 const getResponsiveCellSize = () => {
@@ -12,8 +13,8 @@ const getResponsiveCellSize = () => {
   return 25; // default size for larger screens
 };
 
-const INITIAL_SPEED = 150;
-const SPEED_INCREASE = 2;
+const INITIAL_SPEED = 240;
+const SPEED_INCREASE = 0.95;
 
 function SnakeGame() {
   const canvasRef = useRef(null);
@@ -209,7 +210,7 @@ function SnakeGame() {
         // Check if food is eaten
         if (newHead.x === food.x && newHead.y === food.y) {
           setScore((prev) => prev + 10);
-          setSpeed((prev) => Math.max(prev - SPEED_INCREASE, 50));
+          setSpeed((prev) => Math.max(prev * SPEED_INCREASE, 50));
           generateFood(newSnake);
         } else {
           newSnake.pop();
@@ -365,8 +366,24 @@ function SnakeGame() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center animate-fadeIn">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-          Snake Master
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            Snake Game
+          </motion.span>
         </h1>
 
         {/* Enhanced Score Display */}
@@ -375,7 +392,10 @@ function SnakeGame() {
             Score: {score}
           </span>
           <span className="px-4 sm:px-6 py-1 sm:py-2 rounded-xl bg-slate-800/70 text-purple-400 font-bold text-sm sm:text-xl">
-            Speed: {Math.floor((INITIAL_SPEED - speed) / SPEED_INCREASE)}
+            Speed:{" "}
+            {Math.floor(
+              Math.log(speed / INITIAL_SPEED) / Math.log(SPEED_INCREASE)
+            )}
           </span>
         </div>
 

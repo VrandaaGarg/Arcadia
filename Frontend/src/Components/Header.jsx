@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { IoGameControllerOutline } from "react-icons/io5";
 
 function Header() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -9,27 +11,27 @@ function Header() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isDropdownOpen && !event.target.closest('.relative')) {
+      if (isDropdownOpen && !event.target.closest(".relative")) {
         setIsDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDropdownOpen]);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const getInitials = (username) => {
-    if (!username) return ''; // Add fallback for undefined username
-    
+    if (!username) return ""; // Add fallback for undefined username
+
     return username
-      .split(' ')
-      .map(word => word?.[0] || '')
-      .join('')
+      .split(" ")
+      .map((word) => word?.[0] || "")
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -38,14 +40,31 @@ function Header() {
     <nav className="fixed w-full z-50 bg-slate-900/80 backdrop-blur-xl border-b border-cyan-500/20">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Logo */}
-        <NavLink 
-          to="/" 
-          className="text-2xl sm:text-3xl font-bold transform hover:scale-105 transition-all duration-300"
+        <motion.div
+          initial={{ x: 100, opacity: 0 }} // Start from the right
+          animate={{ x: 0, opacity: 1 }} // Move to normal position
+          transition={{ type: "spring", stiffness: 100, damping: 15 }} // Smooth transition
         >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition delay-200">
-            Arcadia
-          </span>
-        </NavLink>
+          <NavLink
+            to="/"
+            className="text-2xl sm:text-3xl font-bold transform hover:scale-105 transition-all duration-300"
+          >
+            <IoGameControllerOutline className="inline-block text-cyan-400 text-4xl mr-2" />
+            <motion.span
+              className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition delay-200"
+              initial={{ x: 50, opacity: 0 }} // Text slides in slightly after icon
+              animate={{ x: 0, opacity: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+                delay: 0.2,
+              }}
+            >
+              Arcadia
+            </motion.span>
+          </NavLink>
+        </motion.div>
 
         <div className="flex items-center gap-3 sm:gap-4">
           {isAuthenticated && user ? (
@@ -56,14 +75,14 @@ function Header() {
               >
                 {/* User Avatar with Initials - Add fallback */}
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm transition-transform group-hover:scale-105">
-                  {getInitials(user?.username) || '?'}
+                  {getInitials(user?.username) || "?"}
                 </div>
                 <span className="text-cyan-400 hidden sm:block">
-                  {user?.username || 'User'}
+                  {user?.username || "User"}
                 </span>
                 <svg
                   className={`w-4 h-4 text-cyan-400 transition-transform duration-200 ${
-                    isDropdownOpen ? 'rotate-180' : ''
+                    isDropdownOpen ? "rotate-180" : ""
                   }`}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -83,7 +102,9 @@ function Header() {
                 <div className="absolute right-0 mt-2 w-48 py-2 bg-slate-800/90 backdrop-blur-xl rounded-xl shadow-xl border border-cyan-500/20">
                   <div className="px-4 py-2 border-b border-cyan-500/20">
                     <p className="text-sm text-gray-400">Signed in as</p>
-                    <p className="text-sm font-medium text-cyan-400">{user?.username || 'User'}</p>
+                    <p className="text-sm font-medium text-cyan-400">
+                      {user?.username || "User"}
+                    </p>
                   </div>
                   <NavLink
                     to="/profile"

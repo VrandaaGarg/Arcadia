@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import API from "../api";
 import LeaderboardButton from "../Components/LeaderboardButton";
+import { motion } from "framer-motion";
 
 const cardsArray = [
   { id: 1, emoji: "🍎" },
@@ -134,8 +135,24 @@ function MemoryCardGame() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h1 className="text-4xl text-center md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
-          Memory Card Game
+        <h1 className="text-4xl text-center md:text-5xl font-black mb-8 ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            Memory Card Game
+          </motion.span>
         </h1>
         {/* Score & Leaderboard */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Chess as ChessJS } from "chess.js";
+import { motion } from "framer-motion";
 
 const INITIAL_BOARD = [
   ["r", "n", "b", "q", "k", "b", "n", "r"],
@@ -212,8 +213,24 @@ function Chess() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
         <div className="relative z-10 w-full max-w-xl mx-auto animate-fadeIn">
-          <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
-            ♟️ Chess Master ♟️
+          <h1 className="text-4xl md:text-5xl font-black mb-8 text-center ">
+            <motion.span
+              className="bg-clip-text text-transparent"
+              animate={{
+                backgroundImage: [
+                  "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                  "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+                ],
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 2, // Adjust speed of transition
+                ease: "easeInOut",
+              }}
+            >
+              ♟️ Chess Master ♟️
+            </motion.span>
           </h1>
 
           <form
@@ -330,8 +347,24 @@ function Chess() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center animate-fadeIn">
-        <h1 className="text-4xl md:text-5xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-          Chess Master
+        <h1 className="text-4xl md:text-5xl font-black mb-6  ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            Chess Master
+          </motion.span>
         </h1>
 
         {/* Game Status */}

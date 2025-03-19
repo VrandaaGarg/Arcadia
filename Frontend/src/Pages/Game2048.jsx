@@ -77,7 +77,7 @@ const Game2048 = () => {
   const [user, setUser] = useState(null);
   const [gameId, setGameId] = useState(null);
   const [scoreToSubmit, setScoreToSubmit] = useState(null);
-  const [popup, setPopup] = useState({ show: false, type: '', message: '' });
+  const [popup, setPopup] = useState({ show: false, type: "", message: "" });
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -163,16 +163,16 @@ const Game2048 = () => {
     if (!user || !user._id) {
       setPopup({
         show: true,
-        type: 'error',
-        message: 'You must be logged in to submit scores!'
+        type: "error",
+        message: "You must be logged in to submit scores!",
       });
       return;
     }
     if (!gameId) {
       setPopup({
         show: true,
-        type: 'error',
-        message: 'Game ID not found!'
+        type: "error",
+        message: "Game ID not found!",
       });
       return;
     }
@@ -184,15 +184,15 @@ const Game2048 = () => {
       });
       setPopup({
         show: true,
-        type: 'success',
-        message: `Score of ${score} submitted successfully!`
+        type: "success",
+        message: `Score of ${score} submitted successfully!`,
       });
-      setTimeout(() => setPopup({ show: false, type: '', message: '' }), 3000);
+      setTimeout(() => setPopup({ show: false, type: "", message: "" }), 3000);
     } catch (error) {
       setPopup({
         show: true,
-        type: 'error',
-        message: 'Failed to submit score. Please try again.'
+        type: "error",
+        message: "Failed to submit score. Please try again.",
       });
     }
   };
@@ -225,34 +225,78 @@ const Game2048 = () => {
             exit={{ opacity: 0, y: -50 }}
             className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md"
           >
-            <div className={`rounded-xl shadow-2xl p-6 backdrop-blur-md flex items-center gap-4 border
-              ${popup.type === 'success' ? 'bg-green-500/20 border-green-500/50' : 'bg-red-500/20 border-red-500/50'}`}
+            <div
+              className={`rounded-xl shadow-2xl p-6 backdrop-blur-md flex items-center gap-4 border
+              ${
+                popup.type === "success"
+                  ? "bg-green-500/20 border-green-500/50"
+                  : "bg-red-500/20 border-red-500/50"
+              }`}
             >
-              <div className={`p-3 rounded-full 
-                ${popup.type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}>
-                {popup.type === 'success' ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <div
+                className={`p-3 rounded-full 
+                ${popup.type === "success" ? "bg-green-500" : "bg-red-500"}`}
+              >
+                {popup.type === "success" ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 )}
               </div>
               <div className="flex-1">
-                <h4 className={`font-bold text-lg 
-                  ${popup.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                  {popup.type === 'success' ? 'Score Submitted!' : 'Error'}
+                <h4
+                  className={`font-bold text-lg 
+                  ${
+                    popup.type === "success" ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {popup.type === "success" ? "Score Submitted!" : "Error"}
                 </h4>
                 <p className="text-gray-200">{popup.message}</p>
               </div>
-              <button 
-                onClick={() => setPopup({ show: false, type: '', message: '' })}
+              <button
+                onClick={() => setPopup({ show: false, type: "", message: "" })}
                 className="p-2 rounded-full hover:bg-white/10 transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -261,8 +305,24 @@ const Game2048 = () => {
       </AnimatePresence>
 
       <div className="w-full max-w-2xl flex flex-col items-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-          2048 Game
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            2048 Game
+          </motion.span>
         </h1>
 
         {/* Controls Section */}

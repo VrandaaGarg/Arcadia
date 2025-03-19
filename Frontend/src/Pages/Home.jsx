@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import API from "../api";
+import { motion } from "framer-motion";
 
 function Home() {
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
 
   const [games, setGames] = useState([]);
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
 
   //fetch games from backend
   useEffect(() => {
@@ -33,14 +29,6 @@ function Home() {
     game.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B1120] text-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen pb-32 px-4 sm:px-9 pt-24 flex flex-col items-center justify-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative overflow-hidden">
       {/* Animated background shapes */}
@@ -51,12 +39,45 @@ function Home() {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto animate-fadeIn">
         <h1 className="text-5xl md:text-8xl font-black mb-4 text-center animate-slideDown">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400 transition-all duration-700">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            initial={{ scale: 0.7, opacity: 0 }} // Start smaller and invisible
+            animate={{
+              scale: 1, // Zoom in to normal size
+              opacity: 1, // Fade in
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              scale: { duration: 0.8, ease: "easeOut" }, // Smooth zoom-in
+              opacity: { duration: 0.8 }, // Fade in
+              backgroundImage: {
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 1, // Gradient animation speed
+                ease: "easeInOut",
+              },
+            }}
+          >
             Arcadia
-          </span>
+          </motion.span>
         </h1>
-        <p className="text-xl md:text-2xl mb-16 text-center text-cyan-300/80 animate-slideUp">
-          Level Up Your Gaming Experience 🎮
+        <p className="text-xl md:text-2xl mb-16 text-center text-cyan-300/80">
+          Level Up Your Gaming Experience
+          <motion.span
+            className="inline-block ml-2 text-3xl" // 👈 Fix for transform issues
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.2 }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 0.5,
+            }}
+          >
+            🎮
+          </motion.span>
         </p>
 
         {/* Enhanced Search Bar */}
