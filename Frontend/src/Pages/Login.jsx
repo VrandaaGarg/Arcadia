@@ -3,6 +3,7 @@ import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
@@ -32,19 +33,14 @@ const Login = () => {
       });
 
       if (response.data && response.data.user) {
-        // Update global auth state
         login(response.data.user);
-        setMessage({ text: "Login successful!", type: "success" });
+        toast.success("Login successful!");
 
-        // Redirect to the attempted page or home
         const destination = location.state?.from?.pathname || "/";
         navigate(destination);
       }
     } catch (error) {
-      setMessage({
-        text: error.response?.data?.message || "Login failed",
-        type: "error",
-      });
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setIsLoading(false);
     }

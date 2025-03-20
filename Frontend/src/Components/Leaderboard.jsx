@@ -3,6 +3,7 @@ import API from "../api";
 import { FaUserCircle, FaCrown, FaMedal, FaGamepad } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import BackButton from "./BackButton";
 
 const Leaderboard = () => {
   const [gameId, setGameId] = useState(null);
@@ -52,7 +53,7 @@ const Leaderboard = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row items-end justify-center gap-4 w-full max-w-xl md:max-w-4xl px-2 md:px-4 mb-8"
+        className=" flex flex-col md:flex-row items-end justify-center gap-4 w-full max-w-xl md:max-w-4xl px-2 md:px-4 mb-8"
       >
         {/* Second Place */}
         {leaderboard[1] && (
@@ -140,6 +141,8 @@ const Leaderboard = () => {
   if (!leaderboard.length) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white px-4 text-center">
+        <BackButton className="block" />
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -166,6 +169,10 @@ const Leaderboard = () => {
       className="min-h-screen px-2 md:px-4 py-6 md:py-16 flex flex-col items-center justify-center
       bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
     >
+      <div className="relative w-full flex justify-end p-4 sm:p-6 md:p-8 lg:p-10">
+        <BackButton />
+      </div>
+
       <motion.h2
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

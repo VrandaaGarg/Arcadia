@@ -160,7 +160,7 @@ function Sudoku() {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
-            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md"
+            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50  max-w-md w-full p-4"
           >
             <div
               className={`rounded-xl shadow-2xl p-6 backdrop-blur-md flex items-center gap-4 border

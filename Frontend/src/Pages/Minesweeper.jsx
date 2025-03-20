@@ -54,19 +54,13 @@ const Minesweeper = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-      console.error("User not found in localStorage");
+      console.error("User not found ");
     }
   }, []);
 
   useEffect(() => {
     fetchGameId();
   }, []);
-
-  useEffect(() => {
-    if (gameId) {
-      console.log("Game ID is now set:");
-    }
-  }, [gameId]);
 
   const fetchGameId = async () => {
     try {
@@ -149,7 +143,6 @@ const Minesweeper = () => {
         userId: user._id,
         score,
       });
-      console.log("Score submitted:", response.data);
     } catch (error) {
       console.error(
         "Error submitting score:",

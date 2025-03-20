@@ -16,8 +16,6 @@ function Home() {
         setGames(response.data);
       } catch (error) {
         console.error("Error fetching games:", error);
-      } finally {
-        setLoading(false);
       }
     };
 

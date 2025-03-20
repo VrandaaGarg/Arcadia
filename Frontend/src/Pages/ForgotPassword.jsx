@@ -1,59 +1,41 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState(null);
-  const [messageType, setMessageType] = useState(""); // "success" or "error"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Show a loading toast
+    const toastId = toast.loading("Sending reset email...");
+
     try {
       const res = await axios.post(`${API_URL}/api/auth/forgot-password`, {
         email,
       });
-      setMessage(res.data.message);
-      setMessageType("success");
+
+      // Update the toast to success
+      toast.success(res.data.message || "Password reset email sent!", {
+        id: toastId,
+      });
     } catch (error) {
-      setMessage(error.response?.data?.message || "Something went wrong!");
-      setMessageType("error");
+      // Update the toast to error
+      toast.error(error.response?.data?.message || "Something went wrong!", {
+        id: toastId,
+      });
     }
   };
-  // Hide message after 2 seconds
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage(null);
-      }, 2000); // 2 seconds
 
-      return () => clearTimeout(timer); // Cleanup timer on unmount
-    }
-  }, [message]);
   return (
     <div className="min-h-screen px-4 py-24 flex flex-col items-center bg-[#0B1120] bg-[radial-gradient(ellipse_at_top,#1F2937,#0B1120)] text-white relative">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-md mx-auto animate-fadeIn">
-        <AnimatePresence>
-          {message && (
-            <motion.div
-              className={`fixed text-xl border top-20 left-1/2 transform backdrop-blur-xs -translate-x-1/2 px-4 py-3 rounded-md text-white shadow-lg ${
-                messageType === "success"
-                  ? "bg-green-500/60 border-green-400"
-                  : "bg-red-500/50 border-red-500"
-              }`}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              {message}
-            </motion.div>
-          )}
-        </AnimatePresence>
         <h1 className="text-4xl md:text-5xl font-black mb-8 text-center">
           <motion.span
             className="bg-clip-text text-transparent"

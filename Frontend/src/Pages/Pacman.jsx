@@ -96,19 +96,13 @@ const PacManGame = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     } else {
-      console.error("User not found in localStorage");
+      console.error("User not found ");
     }
   }, []);
 
   useEffect(() => {
     fetchGameId();
   }, []);
-
-  useEffect(() => {
-    if (gameId) {
-      console.log("Game ID is now set:");
-    }
-  }, [gameId]);
 
   const fetchGameId = async () => {
     try {
@@ -479,7 +473,6 @@ const PacManGame = () => {
         score: finalScore,
         gameId: gameId,
       });
-      console.log("Score submitted successfully:", response.data);
     } catch (error) {
       console.error("Error submitting score:", error);
     }
@@ -614,7 +607,7 @@ const PacManGame = () => {
         {/* Score & Controls Info */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
-            <p className="text-2xl font-bold">Score: {score}</p>
+            <p className="text-base md:text-2xl font-bold">Score: {score}</p>
           </div>
           <LeaderboardButton gameLink="pacman" />
         </div>
@@ -680,7 +673,7 @@ const PacManGame = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 px-6 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           >
             <motion.div
               initial={{ scale: 0.9 }}
