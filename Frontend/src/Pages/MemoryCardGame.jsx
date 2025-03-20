@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import API from "../api";
 import LeaderboardButton from "../Components/LeaderboardButton";
 import { motion } from "framer-motion";
@@ -115,7 +114,6 @@ function MemoryCardGame() {
         userId: user._id,
         score,
       });
-      console.log("Score submitted:", response.data);
     } catch (error) {
       console.error(
         "Error submitting score:",
