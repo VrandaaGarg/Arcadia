@@ -16,7 +16,7 @@ const app = express();
 // Dynamic CORS setup for development and production
 const allowedOrigins = [
   "http://localhost:5173", // Local frontend
-  "https://arcadia.vrandagarg.me/", // Production frontend
+  "https://arcadia.vrandagarg.me", // Production frontend
   "https://arcadia-backend-765n.onrender.com", // Backend URL
 ];
 
