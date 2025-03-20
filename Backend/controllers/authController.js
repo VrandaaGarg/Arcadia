@@ -43,11 +43,32 @@ async function sendResetEmail(email, resetLink) {
     },
   });
 
+  const expiryMinutes = process.env.RESET_TOKEN_EXPIRY / (1000 * 60); // Convert ms to minutes
+  const expiryText =
+    expiryMinutes >= 60
+      ? `${expiryMinutes / 60} hour(s)`
+      : `${expiryMinutes} minute(s)`;
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Reset Your Password",
-    html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in ${process.env.RESET_TOKEN_EXPIRY} minutes.</p>`,
+    html: `
+    <p>Hi,</p>
+    <p>You recently requested to reset your password. Click the button below to proceed:</p>
+    <p>
+      <a href="${resetLink}" 
+         style="display: inline-block; padding: 10px 20px; font-size: 16px; 
+                color: #fff; background-color: #007bff; text-decoration: none; 
+                border-radius: 5px;">
+        Reset Password
+      </a>
+    </p>
+    <p>This link will expire in <strong>${expiryText}</strong> for security reasons.</p>
+    <p>If you didn't request a password reset, please ignore this email.</p>
+    <p>Stay safe,</p>
+    <p><strong>Arcadia</strong></p>
+  `,
   };
 
   await transporter.sendMail(mailOptions);

@@ -167,9 +167,9 @@ const Leaderboard = () => {
   return (
     <div
       className="min-h-screen px-2 md:px-4 py-6 md:py-16 flex flex-col items-center justify-center
-      bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
+      bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] pb-16 text-white"
     >
-      <div className="relative w-full flex justify-end p-4 sm:p-6 md:p-8 lg:p-10">
+      <div className="relative w-full flex justify-end pt-12 sm:p-6 md:p-8 lg:p-10">
         <BackButton />
       </div>
 
@@ -195,13 +195,13 @@ const Leaderboard = () => {
               <table className="w-full border-collapse min-w-[300px]">
                 <thead>
                   <tr className="bg-purple-800/50">
-                    <th className="p-2 md:p-4 text-left text-xs md:text-base">
+                    <th className="p-2 md:p-4 text-left text-sm md:text-base">
                       #
                     </th>
-                    <th className="p-2 md:p-4 text-left text-xs md:text-base">
+                    <th className="p-2 md:p-4 text-left text-sm md:text-base">
                       Player
                     </th>
-                    <th className="p-2 md:p-4 text-right text-xs md:text-base">
+                    <th className="p-2 md:p-4 text-right text-sm md:text-base">
                       Score
                     </th>
                   </tr>
@@ -215,18 +215,18 @@ const Leaderboard = () => {
                       key={player.userId}
                       className="border-t border-purple-700/30 hover:bg-purple-700/20 transition-colors"
                     >
-                      <td className="p-2 md:p-4 text-gray-300 text-xs md:text-base">
+                      <td className="p-2 md:p-4 text-gray-300 text-sm md:text-base">
                         {index + 4}
                       </td>
                       <td className="p-2 md:p-4">
                         <div className="flex items-center gap-2">
                           <FaUserCircle className="text-base md:text-xl text-purple-400" />
-                          <span className="font-medium text-xs md:text-base truncate max-w-[120px] md:max-w-none">
+                          <span className="font-medium text-sm md:text-base truncate max-w-[120px] md:max-w-none">
                             {player.username}
                           </span>
                         </div>
                       </td>
-                      <td className="p-2 md:p-4 text-right font-bold text-purple-400 text-xs md:text-base">
+                      <td className="p-2 md:p-4 text-right font-bold text-purple-400 text-sm md:text-base">
                         {player.score}
                       </td>
                     </motion.tr>
