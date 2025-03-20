@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px; /* Added for horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a; /* Dark background */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06b6d4, #3b82f6, #9333ea);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9333ea, #3b82f6, #06b6d4);
+}
+
+/* Prevent white space on overflow */
+html, body {
+  background-color: #0f172a;
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100%;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 #0f172a;
+}

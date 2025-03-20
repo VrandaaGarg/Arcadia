@@ -2,11 +2,15 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
+  if (loading) {
+    // You can return a loading spinner here if you want
+    return null;
+  }
+
   if (!isAuthenticated) {
-    // Redirect to login with the attempted location
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

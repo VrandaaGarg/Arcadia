@@ -164,8 +164,24 @@ const Minesweeper = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen px-2 sm:px-4 py-24 flex flex-col items-center bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] text-white"
     >
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-        Minesweeper
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-8 text-center ">
+        <motion.span
+          className="bg-clip-text text-transparent"
+          animate={{
+            backgroundImage: [
+              "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+              "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+            ],
+          }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "mirror",
+            duration: 2, // Adjust speed of transition
+            ease: "easeInOut",
+          }}
+        >
+          Minesweeper
+        </motion.span>
       </h1>
 
       {/* Difficulty Selection */}

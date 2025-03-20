@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function TicTacToe() {
   // Add new state variables for game mode and difficulty
@@ -144,8 +145,24 @@ function TicTacToe() {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
         <div className="relative z-10 w-full max-w-md mx-auto">
-          <h1 className="text-4xl md:text-5xl font-black mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
-            Tic Tac Toe
+          <h1 className="text-4xl md:text-5xl font-black mb-8 text-center ">
+            <motion.span
+              className="bg-clip-text text-transparent"
+              animate={{
+                backgroundImage: [
+                  "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                  "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+                ],
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 2, // Adjust speed of transition
+                ease: "easeInOut",
+              }}
+            >
+              Tic Tac Toe
+            </motion.span>
           </h1>
 
           <form
@@ -247,8 +264,24 @@ function TicTacToe() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(white,transparent_85%)] opacity-20" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 hover:from-purple-600 hover:to-cyan-400">
-          Tic Tac Toe
+        <h1 className="text-4xl md:text-5xl font-black mb-8 ">
+          <motion.span
+            className="bg-clip-text text-transparent"
+            animate={{
+              backgroundImage: [
+                "linear-gradient(to right, #06b6d4, #3b82f6, #9333ea)", // cyan -> blue -> purple
+                "linear-gradient(to right, #9333ea, #3b82f6, #06b6d4)", // purple -> blue -> cyan
+              ],
+            }}
+            transition={{
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2, // Adjust speed of transition
+              ease: "easeInOut",
+            }}
+          >
+            Tic Tac Toe
+          </motion.span>
         </h1>
 
         {/* Score & Players */}

@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaPhone, FaGamepad, FaTrophy, FaClock } from "react-icons/fa";
 import API from "../api";
+import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { user, isAuthenticated } = useAuth();
@@ -60,8 +61,10 @@ const Profile = () => {
       }));
 
       setIsEditing(false);
+      toast.success('Profile updated successfully!');
     } catch (error) {
       console.error("Error updating profile:", error);
+      toast.error('Failed to update profile');
     }
   };
 
