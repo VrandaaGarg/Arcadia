@@ -36,12 +36,6 @@ function MemoryCardGame() {
     fetchGameId();
   }, []);
 
-  useEffect(() => {
-    if (gameId) {
-      console.log("Game ID is now set:");
-    }
-  }, [gameId]);
-
   // Initialize game when component mounts
   useEffect(() => {
     startGame();

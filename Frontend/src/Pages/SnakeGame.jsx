@@ -46,12 +46,6 @@ function SnakeGame() {
     fetchGameId();
   }, []);
 
-  useEffect(() => {
-    if (gameId) {
-      console.log("Game ID is now set:");
-    }
-  }, [gameId]);
-
   const fetchGameId = async () => {
     try {
       const response = await API.get("/api/games");
@@ -352,7 +346,6 @@ function SnakeGame() {
         userId: user._id,
         score,
       });
-      console.log("Score submitted:", response.data);
     } catch (error) {
       console.error(
         "Error submitting score:",

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
@@ -26,10 +27,10 @@ const SignUp = () => {
         `${API_URL}/api/users/register`,
         formData
       );
-      alert("Signup successful! Please login.");
+      toast.success("Signup successful! Please login.");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || "Signup failed");
     }
   };
 

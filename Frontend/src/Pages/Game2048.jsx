@@ -81,7 +81,6 @@ const Game2048 = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    console.log("Stored User:", storedUser);
 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -93,12 +92,6 @@ const Game2048 = () => {
   useEffect(() => {
     fetchGameId();
   }, []);
-
-  useEffect(() => {
-    if (gameId) {
-      console.log("Game ID is now set:");
-    }
-  }, [gameId]);
 
   const fetchGameId = async () => {
     try {
@@ -223,7 +216,7 @@ const Game2048 = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
-            className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md"
+            className="fixed px-7 top-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md md:max-w-2xl"
           >
             <div
               className={`rounded-xl shadow-2xl p-6 backdrop-blur-md flex items-center gap-4 border
@@ -376,7 +369,7 @@ const Game2048 = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
             onClick={resetGame}
-            className="px-6 py-3 bg-gradient-to-r text-white font-semibold from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
+            className="px-3 md:px-6 py-3 bg-gradient-to-r text-white font-semibold from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
             rounded-xl transition-all duration-300 flex items-center gap-2"
           >
             {" "}
