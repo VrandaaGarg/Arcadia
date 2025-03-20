@@ -137,8 +137,10 @@ const Game2048 = () => {
   };
 
   const resetGame = () => {
+    if (score > 0) {
+      setScoreToSubmit(score); // Store the score only if it's greater than 0
+    }
     setBoard(initializeBoard());
-    setScoreToSubmit(score); // Store the score for submission
     setScore(0);
   };
 

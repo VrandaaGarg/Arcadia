@@ -8,8 +8,8 @@ const BackButton = () => {
   const { gameName } = useParams(); // Get gameName dynamically from URL
 
   return (
-    <Link
-      to={`/${gameName}`} // Navigate back to the game page dynamically
+    <button
+      onClick={() => window.history.back()} // Navigate back to the game page dynamically
     >
       <motion.div
         whileHover={{ scale: 1.05 }}
@@ -19,7 +19,7 @@ const BackButton = () => {
         <IoCaretBack className=" text-white transition-transform duration-200 hover:scale-110" />
         <span className="text-white  hidden sm:inline">Back</span>
       </motion.div>
-    </Link>
+    </button>
   );
 };
 

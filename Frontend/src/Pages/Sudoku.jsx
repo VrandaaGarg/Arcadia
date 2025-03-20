@@ -314,6 +314,8 @@ function Sudoku() {
             row.map((cell, colIndex) => (
               <input
                 key={`${rowIndex}-${colIndex}`}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 type="text"
                 maxLength="1"
                 value={cell}

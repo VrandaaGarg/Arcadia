@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -124,17 +127,31 @@ const SignUp = () => {
           {/* Password Input */}
           <div>
             <label className="block text-cyan-400 mb-2 text-sm">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              required
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
-                focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
-                transition-all duration-300"
-              placeholder="••••••••"
-            />
+
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                required
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-10 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
+      focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
+      transition-all duration-300"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200"
+              >
+                {showPassword ? (
+                  <AiOutlineEye className="h-5 w-5" />
+                ) : (
+                  <AiOutlineEyeInvisible className="h-5 w-5" />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Submit Button */}

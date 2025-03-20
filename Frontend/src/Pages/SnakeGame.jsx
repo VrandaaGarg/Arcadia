@@ -422,7 +422,7 @@ function SnakeGame() {
                     Swipe to move
                   </p>
                   <p className="text-sm sm:text-base text-gray-300">
-                    Tap to pause/resume
+                    Tap to stop
                   </p>
                 </div>
               )}

@@ -85,7 +85,7 @@ function Chess() {
       newGameState.gameOver = true;
       if (newGameState.chess.isCheckmate()) {
         newGameState.status = `Checkmate! ${
-          newGameState.turn === "w" ? "Black" : "White"
+          newGameState.turn === "w" ? "white" : "black"
         } wins!`;
       } else if (newGameState.chess.isDraw()) {
         newGameState.status = "Game Over - Draw!";
@@ -293,7 +293,7 @@ function Chess() {
             {/* Player Names */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="block text-cyan-400 mb-2">White Player</label>
+                <label className="block text-cyan-400 mb-2">Black Player</label>
                 <input
                   type="text"
                   placeholder="Enter name"
@@ -310,7 +310,7 @@ function Chess() {
               {gameMode === "pvp" && (
                 <div className="space-y-2">
                   <label className="block text-cyan-400 mb-2">
-                    Black Player
+                    White Player
                   </label>
                   <input
                     type="text"
@@ -393,7 +393,7 @@ function Chess() {
         </div>
 
         {/* Chess Board */}
-        <div className="p-8 bg-gradient-to-br from-[#2C1810] to-[#1A0F0A] rounded-2xl border-4 border-[#3D2B1F] shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+        <div className="p-5 bg-gradient-to-br from-[#2C1810] to-[#1A0F0A] rounded-2xl border-4 border-[#3D2B1F] shadow-[0_0_40px_rgba(0,0,0,0.5)]">
           <div className="grid grid-cols-8 gap-0.5 p-3 bg-[#3D2B1F] rounded-xl">
             {INITIAL_BOARD.map((row, rowIndex) =>
               row.map((_, colIndex) => {
@@ -413,7 +413,7 @@ function Chess() {
                   <button
                     key={`${rowIndex}-${colIndex}`}
                     onClick={() => handleSquareClick(rowIndex, colIndex)}
-                    className={`w-8 h-8 text-center md:w-20 md:h-20 flex items-center justify-center
+                    className={`w-8 h-8 text-center md:w-12 md:h-12 flex items-center justify-center
                       relative overflow-hidden
                       ${
                         (rowIndex + colIndex) % 2 === 0
@@ -425,7 +425,7 @@ function Chess() {
                   >
                     {piece && (
                       <span
-                        className={`text-2xl text-center md:text-5xl select-none
+                        className={`text-2xl text-center md:text-4xl select-none
                         text-black transition-transform duration-200
                         ${isSelected ? "scale-110" : ""}`}
                       >
@@ -473,14 +473,6 @@ function Chess() {
           >
             New Game
           </button>
-          <NavLink
-            to="/leaderboard"
-            className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
-            rounded-xl transition-all duration-300 transform hover:scale-105 
-            hover:shadow-[0_0_15px_rgba(236,72,153,0.3)] font-medium flex items-center gap-2"
-          >
-            🏆 Leaderboard
-          </NavLink>
         </div>
       </div>
     </div>
