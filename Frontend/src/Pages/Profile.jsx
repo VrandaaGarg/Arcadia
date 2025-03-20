@@ -75,12 +75,8 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B1120]">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-[#0B1120] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-500"></div>
       </div>
     );
   }
