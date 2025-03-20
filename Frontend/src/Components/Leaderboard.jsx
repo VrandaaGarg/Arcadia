@@ -169,7 +169,7 @@ const Leaderboard = () => {
       className="min-h-screen px-2 md:px-4 py-6 md:py-16 flex flex-col items-center justify-center
       bg-gradient-to-b from-[#1F2937] via-[#0B1120] to-[#0B1120] pb-16 text-white"
     >
-      <div className="relative w-full flex justify-end pt-12 sm:p-6 md:p-8 lg:p-10">
+      <div className="relative w-full flex justify-end pt-16 sm:p-7 lg:p-10 md:p-12 ">
         <BackButton />
       </div>
 
