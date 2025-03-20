@@ -66,7 +66,14 @@ const SignUp = () => {
         >
           {/* Name Input */}
           <div>
-            <label className="block text-cyan-400 mb-2 text-sm">Username</label>
+            <label
+              className="block text-cyan-400 mb-2 text-sm"
+              title="You cannot change this later"
+            >
+              Username{" "}
+              <span className="text-gray-400">(can't change later)</span>
+            </label>
+
             <input
               type="text"
               name="username"
