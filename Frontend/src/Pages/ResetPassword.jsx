@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
 
 const ResetPassword = () => {
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [token, setToken] = useState("");
@@ -68,24 +71,51 @@ const ResetPassword = () => {
         </h1>
 
         <div className="space-y-6 bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl border border-cyan-500/20">
-          <input
-            type="password"
-            placeholder="Enter new password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
-            focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
-            transition-all duration-300"
-          />
-          <input
-            type="password"
-            placeholder="Confirm new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
-            focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
-            transition-all duration-300"
-          />
+          <div className="relative w-full">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              placeholder="Enter new password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full px-4 py-3 pr-10 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
+      focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
+      transition-all duration-300"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200"
+            >
+              {showNewPassword ? (
+                <AiOutlineEye className="h-5 w-5" />
+              ) : (
+                <AiOutlineEyeInvisible className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          <div className="relative w-full mt-4">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3 pr-10 rounded-lg bg-slate-900/50 border border-cyan-500/20 text-gray-100 
+      focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 
+      transition-all duration-300"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200"
+            >
+              {showConfirmPassword ? (
+                <AiOutlineEye className="h-5 w-5" />
+              ) : (
+                <AiOutlineEyeInvisible className="h-5 w-5" />
+              )}
+            </button>
+          </div>
           <div className="flex place-content-center">
             <button
               onClick={handleSubmit}

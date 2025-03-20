@@ -36,7 +36,13 @@ function TicTacToe() {
       default:
         move = getRandomMove();
     }
-    handleClick(move);
+
+    if (move !== null) {
+      const newBoard = [...board];
+      newBoard[move] = "O";
+      setBoard(newBoard);
+      setIsXNext(true); // Give turn back to the player
+    }
   };
 
   const getRandomMove = () => {
@@ -109,7 +115,8 @@ function TicTacToe() {
   };
 
   const handleClick = (index) => {
-    if (board[index] || winner || isDraw) return;
+    if (board[index] || winner || isDraw || (gameMode === "pvc" && !isXNext))
+      return;
 
     const newBoard = [...board];
     newBoard[index] = isXNext ? "X" : "O";
@@ -287,11 +294,11 @@ function TicTacToe() {
         {/* Score & Players */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <div className="flex gap-4">
-            <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+            <div className="bg-slate-800/50 text-center backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
               <p className="text-cyan-400">{players.X}</p>
               <p className="text-xl font-bold">X: {score.X}</p>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
+            <div className="bg-slate-800/50 text-center backdrop-blur-sm border border-cyan-500/20 px-6 py-3 rounded-xl">
               <p className="text-cyan-400">{players.O}</p>
               <p className="text-xl font-bold">O: {score.O}</p>
             </div>
