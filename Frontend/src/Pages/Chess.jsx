@@ -85,7 +85,7 @@ function Chess() {
       newGameState.gameOver = true;
       if (newGameState.chess.isCheckmate()) {
         newGameState.status = `Checkmate! ${
-          newGameState.turn === "w" ? "Black" : "White"
+          newGameState.turn === "w" ? "white" : "black"
         } wins!`;
       } else if (newGameState.chess.isDraw()) {
         newGameState.status = "Game Over - Draw!";
