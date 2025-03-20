@@ -372,14 +372,16 @@ const Game2048 = () => {
         </div>
 
         <div className="flex gap-5 my-7">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
             onClick={resetGame}
             className="px-6 py-3 bg-gradient-to-r text-white font-semibold from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
             rounded-xl transition-all duration-300 flex items-center gap-2"
           >
             {" "}
             New Game
-          </button>
+          </motion.button>
           <LeaderboardButton gameLink="2048" />
         </div>
         {/* Mobile Arrow Controls */}

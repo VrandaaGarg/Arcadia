@@ -199,12 +199,14 @@ function MemoryCardGame() {
         </div>
         {/* Control Button */}
         <div className="flex flex-wrap justify-center gap-4 mt-3.5">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.7 }}
             onClick={startGame}
             className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl transition-all duration-300 transform hover:scale-105"
           >
             New Game
-          </button>
+          </motion.button>
           <LeaderboardButton gameLink="memorycardgame" />{" "}
         </div>
       </div>

@@ -328,14 +328,17 @@ function Chess() {
               )}
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 180, damping: 12 }}
               type="submit"
               className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 
-                rounded-xl transition-all duration-300 transform hover:scale-105 font-medium text-lg
-                hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+    rounded-xl transition-all duration-300 transform hover:scale-105 font-medium text-lg
+    hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] active:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
             >
               Start Game 🎮
-            </button>
+            </motion.button>
           </form>
         </div>
       </div>
