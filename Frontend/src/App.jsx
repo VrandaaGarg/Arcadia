@@ -5,6 +5,7 @@ import Footer from "./Components/Footer";
 import { Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
 import { IoGameControllerOutline } from "react-icons/io5";
+import { Toaster } from 'react-hot-toast';
 
 function Layout() {
   const [loading, setLoading] = useState(true);
@@ -39,11 +40,30 @@ function Layout() {
   return loading ? (
     <Loader />
   ) : (
-    <AuthProvider>
-      <Header />
-      <Outlet />
-      <Footer />
-    </AuthProvider>
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#0f172a',
+            color: '#fff',
+            border: '1px solid #3b82f6',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#06b6d4',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      <AuthProvider>
+        <Header />
+        <Outlet />
+        <Footer />
+      </AuthProvider>
+    </>
   );
 }
 export default Layout;
