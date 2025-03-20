@@ -17,7 +17,8 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173", // Local frontend
   "https://aarcadia.vercel.app", // Production frontend
-  "https://arcadia-backend-765n.onrender.com", // Backend URL
+  "https://arcadia-backend-765n.onrender.com",
+  "https://arcadia.vrandagarg.me/", // Backend URL
 ];
 
 app.use(
